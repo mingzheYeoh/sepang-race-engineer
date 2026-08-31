@@ -5,6 +5,8 @@ the 2026 Bahrain Grand Prix, held in Malaysia on **2–4 October 2026**.
 
 **Live: https://sepang-race-engineer.vercel.app**
 
+English · [中文](README.zh-CN.md)
+
 <table>
   <tr>
     <td width="33%"><img src="docs/screenshots/home.png" alt="Landing page: the surveyed circuit outline over the Sepang wordmark, with the six tools listed below"></td>
@@ -26,7 +28,8 @@ ground.
 
 | Route | What it is |
 | --- | --- |
-| `/` | **Paddock** — where the weekend is right now: the live session or the countdown to the next one, the hour-by-hour tropical forecast, and one piece of advice derived from it. |
+| `/` | **Home** — what this is, and the way into each of the six tools. A first visit gets a four-step tour; it stands down for a link that carries a shared card or a demo timestamp. |
+| `/paddock` | **Paddock** — where the weekend is right now: the live session or the countdown to the next one, the hour-by-hour tropical forecast, and one piece of advice derived from it. |
 | `/track` | **Circuit** — all 15 corners drawn 1:1 from surveyed coordinates. Each corner explains one idea from Formula 1. |
 | `/pitwall` | **Pit Wall** — a transparent tyre model. Every constant is on the page; the strategy is searched, not hardcoded. |
 | `/archive` | **Archive** — all 19 Malaysian Grands Prix at Sepang, 1999–2017, plus a quiz generated from the results themselves. |
@@ -72,7 +75,7 @@ so instead of inventing it.
 ```bash
 npm install
 npm run dev     # http://localhost:3000
-npm test        # 57 tests, node:test, no framework
+npm test        # 65 tests, node:test, no framework
 npm run build
 ```
 
