@@ -12,6 +12,7 @@ import {
 import { estimateTrackTemp, type HourPoint, type SepangWeather } from "@/lib/weather";
 import { OCTOBER_NORMALS } from "@/lib/climate";
 import { adviceFor } from "@/lib/advice";
+import TeamRadio from "./team-radio";
 
 /** Open-Meteo returns local naive timestamps; Malaysia is a fixed +08:00. */
 const msOf = (h: HourPoint) => Date.parse(`${h.time}:00+08:00`);
@@ -25,13 +26,14 @@ const STATUS_LABEL = {
 
 export default function Paddock({
   nowMs,
-  frozen,
+  tOverride,
   weather,
 }: {
   nowMs: number;
-  frozen: boolean;
+  tOverride?: string;
   weather: SepangWeather | null;
 }) {
+  const frozen = Boolean(tOverride);
   const [now, setNow] = useState(nowMs);
   useEffect(() => {
     const started = Date.now();
@@ -218,6 +220,7 @@ export default function Paddock({
       </section>
 
       <TimeTravel frozen={frozen} />
+      <TeamRadio tOverride={tOverride} />
     </main>
   );
 }

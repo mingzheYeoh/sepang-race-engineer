@@ -1,0 +1,79 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { buildFacts } from "./facts.ts";
+import { factsForPrompt, isTopic, radioTemplate } from "./radio.ts";
+import { resolveWeekend } from "./weekend.ts";
+import type { HourPoint } from "./weather.ts";
+
+const at = (iso: string) => Date.parse(iso);
+
+const conditions = (over: Partial<HourPoint> = {}): HourPoint => ({
+  time: "2026-10-04T15:00",
+  tempC: 32,
+  feelsC: 39,
+  rainChance: 20,
+  rainMm: 0,
+  humidity: 80,
+  ...over,
+});
+
+const factsAt = (iso: string, w: HourPoint | null = conditions()) =>
+  buildFacts(resolveWeekend(at(iso)), w);
+
+test("topic validation rejects anything not a preset", () => {
+  assert.ok(isTopic("weather"));
+  assert.ok(!isTopic("__proto__"));
+  assert.ok(!isTopic(""));
+  assert.ok(!isTopic(null));
+  assert.ok(!isTopic({ topic: "weather" }));
+});
+
+test("every preset answers without a model, in every phase", () => {
+  const phases = [
+    "2026-09-30T09:00:00+08:00", // before
+    "2026-10-02T12:00:00+08:00", // live
+    "2026-10-02T13:00:00+08:00", // break
+    "2026-10-05T09:00:00+08:00", // after
+  ];
+  for (const iso of phases) {
+    for (const w of [conditions(), null]) {
+      const facts = factsAt(iso, w);
+      for (const topic of ["weather", "next", "kit", "track"] as const) {
+        const line = radioTemplate(facts, topic);
+        assert.ok(line.length > 10, `${topic} at ${iso} produced "${line}"`);
+        assert.ok(!line.includes("undefined"), `${topic} leaked undefined: ${line}`);
+        assert.ok(!line.includes("NaN"), `${topic} leaked NaN: ${line}`);
+      }
+    }
+  }
+});
+
+test("weather preset distinguishes wet from dry", () => {
+  const wet = radioTemplate(factsAt("2026-10-04T15:30:00+08:00", conditions({ rainMm: 4, rainChance: 90 })), "weather");
+  const dry = radioTemplate(factsAt("2026-10-04T15:30:00+08:00", conditions({ rainChance: 5 })), "weather");
+  assert.match(wet, /wet track/i);
+  assert.match(dry, /dry/i);
+});
+
+test("kit preset adds a poncho only when rain is likely", () => {
+  const wet = radioTemplate(factsAt("2026-10-02T10:00:00+08:00", conditions({ rainChance: 80 })), "kit");
+  const dry = radioTemplate(factsAt("2026-10-02T10:00:00+08:00", conditions({ rainChance: 5 })), "kit");
+  assert.match(wet, /poncho/i);
+  assert.ok(!/poncho/i.test(dry));
+});
+
+test("next preset reports the running session, then the gap, then the flag", () => {
+  assert.match(radioTemplate(factsAt("2026-10-02T12:00:00+08:00"), "next"), /Practice 1/);
+  assert.match(radioTemplate(factsAt("2026-10-02T13:00:00+08:00"), "next"), /Practice 2/);
+  assert.match(radioTemplate(factsAt("2026-10-05T09:00:00+08:00"), "next"), /Chequered flag/i);
+});
+
+test("the prompt facts block states what it does not know", () => {
+  const withWeather = factsForPrompt(factsAt("2026-10-04T15:30:00+08:00"));
+  assert.match(withWeather, /track_temp_c_estimated: \d+/);
+  assert.match(withWeather, /strategy: not calculated yet/);
+
+  const without = factsForPrompt(factsAt("2026-10-04T15:30:00+08:00", null));
+  assert.match(without, /weather: unavailable/);
+  assert.ok(!without.includes("undefined"));
+});

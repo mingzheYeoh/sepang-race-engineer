@@ -9,5 +9,5 @@ export default async function Page({
 }) {
   const { t } = await searchParams;
   const weather = await getSepangWeather();
-  return <Paddock nowMs={overrideNow(t)} frozen={Boolean(t)} weather={weather} />;
+  return <Paddock nowMs={overrideNow(t)} tOverride={t} weather={weather} />;
 }
