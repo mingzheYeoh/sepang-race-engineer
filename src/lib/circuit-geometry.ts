@@ -1,4 +1,4 @@
-// GENERATED from OpenStreetMap — regenerate from the source below, do not hand-edit.
+// GENERATED from OpenStreetMap - regenerate from the sources below, do not hand-edit.
 //
 // Sepang International Circuit, Grand Prix layout: OSM ways 23410503 and
 // 144359489, which chain into a closed loop measuring 5554 m against an
@@ -6,8 +6,13 @@
 // and normalised to the viewBox below. Index 0 is the start/finish line and the
 // array runs in the racing direction, clockwise.
 //
-// Map data (c) OpenStreetMap contributors, available under the Open Database
-// Licence (ODbL). https://www.openstreetmap.org/copyright
+// Corner node ranges are aligned to the official turn numbering, cross-checked
+// against published turn-by-turn guides: the hands match those guides for Turns
+// 1-13, and for Turns 14-15 the survey agrees with Wikipedia over Driver61,
+// which lists that pair the other way round.
+//
+// Map data (c) OpenStreetMap contributors, Open Database Licence (ODbL).
+// https://www.openstreetmap.org/copyright
 
 export const VIEWBOX = "0 0 1000 842";
 export const LAP_METRES = 5554;
@@ -195,22 +200,21 @@ export const LAP: [number, number][] = [
 ];
 
 /** Corner marker positions, as indexes into LAP. */
-export const CORNER_INDEX: number[] = [9, 23, 31, 41, 56, 71, 84, 97, 109, 117, 127, 136, 143, 153, 167];
+export const CORNER_INDEX: number[] = [9, 23, 37, 56, 71, 84, 94, 100, 109, 117, 127, 136, 143, 153, 167];
 
 /**
- * Corner properties measured from the survey line, not copied from a written
- * description: hand from the sign of the accumulated heading change, speed from
- * how many degrees it turns per metre.
+ * Measured off the survey line, not transcribed: hand from the sign of the
+ * accumulated heading change, speed from degrees turned per metre.
  */
 export const CORNER_GEOMETRY = [
   { hand: "right", sweepDeg: 202, lengthM: 156, degPerM: 1.3, speed: "slow", atM: 17, approachM: 920 },
   { hand: "left", sweepDeg: 147, lengthM: 101, degPerM: 1.45, speed: "slow", atM: 173, approachM: 0 },
-  { hand: "right", sweepDeg: 36, lengthM: 79, degPerM: 0.46, speed: "medium", atM: 290, approachM: 16 },
-  { hand: "right", sweepDeg: 67, lengthM: 269, degPerM: 0.25, speed: "fast", atM: 423, approachM: 54 },
+  { hand: "right", sweepDeg: 108, lengthM: 401, degPerM: 0.27, speed: "fast", atM: 290, approachM: 16 },
   { hand: "right", sweepDeg: 102, lengthM: 44, degPerM: 2.33, speed: "slow", atM: 989, approachM: 298 },
   { hand: "left", sweepDeg: 129, lengthM: 266, degPerM: 0.49, speed: "medium", atM: 1260, approachM: 227 },
   { hand: "right", sweepDeg: 100, lengthM: 176, degPerM: 0.57, speed: "medium", atM: 1526, approachM: 0 },
-  { hand: "right", sweepDeg: 128, lengthM: 262, degPerM: 0.49, speed: "medium", atM: 1976, approachM: 274 },
+  { hand: "right", sweepDeg: 64, lengthM: 107, degPerM: 0.6, speed: "medium", atM: 1976, approachM: 274 },
+  { hand: "right", sweepDeg: 61, lengthM: 146, degPerM: 0.42, speed: "medium", atM: 2092, approachM: 9 },
   { hand: "left", sweepDeg: 137, lengthM: 106, degPerM: 1.29, speed: "slow", atM: 2573, approachM: 335 },
   { hand: "right", sweepDeg: 60, lengthM: 109, degPerM: 0.55, speed: "medium", atM: 2693, approachM: 13 },
   { hand: "right", sweepDeg: 122, lengthM: 430, degPerM: 0.28, speed: "fast", atM: 2817, approachM: 15 },
@@ -220,7 +224,7 @@ export const CORNER_GEOMETRY = [
   { hand: "left", sweepDeg: 170, lengthM: 122, degPerM: 1.39, speed: "slow", atM: 4530, approachM: 719 },
 ] as const;
 
-/** DRS zones as [startIndex, endIndex] into LAP — both of Sepang's long straights. */
+/** DRS zones as [startIndex, endIndex] into LAP - both of Sepang's long straights. */
 export const DRS_ZONES: [number, number][] = [
   [158, 162], // back straight: Turn 14 exit to the Turn 15 braking zone
   [173, 175], // pit straight: Turn 15 exit to the line

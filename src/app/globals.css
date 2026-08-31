@@ -1,16 +1,19 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ink: #05070b;
-  --color-surface: #10151f;
-  --color-surface-2: #1a2130;
-  --color-line: #2a3446;
+  --color-ink: #07090d;
+  --color-surface: #11151d;
+  --color-surface-2: #1b212c;
+  --color-line: #2b3442;
+  --color-line-soft: #1f2732;
   --color-text: #eef2f8;
-  --color-muted: #8d9ab0;
-  --color-amber: #ffd400;
-  --color-royal: #1a63d8;
-  --color-wet: #35c3e0;
-  --font-display: var(--font-display), system-ui, sans-serif;
+  --color-muted: #8996ac;
+  --color-amber: #ffc61e;
+  --color-wet: #38c8e6;
+  --color-royal: #2a6ce0;
+
+  --font-display: var(--font-chakra), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-plex), ui-sans-serif, system-ui, sans-serif;
 }
 
 html {
@@ -21,21 +24,94 @@ html {
 body {
   background: var(--color-ink);
   color: var(--color-text);
+  font-family: var(--font-sans);
   font-synthesis-weight: none;
+  /* Never let a bottom sheet or the tab bar cause a horizontal scroll. */
+  overflow-x: hidden;
 }
 
-/* Faint track-asphalt texture so the dark ground is not a flat void. */
+/* Atmosphere: a faint tropical haze from the top, warm ground light from below,
+   and a fine scanline so the flat black reads as a screen rather than a void. */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  pointer-events: none;
   z-index: 0;
+  pointer-events: none;
   background:
-    radial-gradient(120% 80% at 50% -10%, rgba(26, 99, 216, 0.18), transparent 60%),
-    radial-gradient(80% 50% at 100% 100%, rgba(255, 212, 0, 0.06), transparent 70%);
+    radial-gradient(130% 70% at 50% -15%, rgba(42, 108, 224, 0.2), transparent 62%),
+    radial-gradient(90% 45% at 100% 105%, rgba(255, 198, 30, 0.07), transparent 70%);
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.018) 0 1px,
+    transparent 1px 3px
+  );
+}
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .tabular {
   font-variant-numeric: tabular-nums;
+  font-family: var(--font-display);
+}
+
+/* Section label used throughout: small, wide, quiet. */
+.eyebrow {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* Timing-screen rule: a hairline that fades out, used to open sections. */
+.rule {
+  height: 1px;
+  background: linear-gradient(to right, var(--color-line), transparent);
+}
+
+/* Horizontal chip rails scroll without showing a bar on mobile. */
+.rail {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-snap-type: x proximity;
+}
+.rail::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise {
+  animation: rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }

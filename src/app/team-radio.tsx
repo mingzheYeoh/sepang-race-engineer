@@ -1,21 +1,27 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { RadioReply } from "./api/radio/route";
 import { MAX_QUESTION, TOPICS, TOPIC_LABELS, type Topic } from "@/lib/radio";
 
 type Line = { from: "you" | "engineer"; text: string; source?: RadioReply["source"] };
 
-export default function TeamRadio() {
-  // Read from the URL rather than a prop so the radio can live in the layout
-  // and stay in sync with the page's time override on every route.
+export default function TeamRadio({ open, onClose }: { open: boolean; onClose: () => void }) {
+  // Read from the URL rather than a prop so the radio stays in sync with the
+  // page's time override on every route.
   const tOverride = useSearchParams().get("t") ?? undefined;
-  const [open, setOpen] = useState(false);
   const [lines, setLines] = useState<Line[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const logRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
 
   async function send(payload: { topic?: Topic; question?: string }, shown: string) {
     setBusy(true);
@@ -34,14 +40,11 @@ export default function TeamRadio() {
           : { from: "engineer", text: data.error },
       ]);
     } catch {
-      setLines((l) => [
-        ...l,
-        { from: "engineer", text: "Radio's cut out. Check your connection." },
-      ]);
+      setLines((l) => [...l, { from: "engineer", text: "Radio's cut out. Check your connection." }]);
     } finally {
       setBusy(false);
       requestAnimationFrame(() =>
-        logRef.current?.scrollTo({ top: logRef.current.scrollHeight }),
+        logRef.current?.scrollTo({ top: logRef.current.scrollHeight, behavior: "smooth" }),
       );
     }
   }
@@ -54,89 +57,93 @@ export default function TeamRadio() {
     void send({ question: q }, q);
   }
 
-  if (!open) {
-    return (
-      <button
-        onClick={() => setOpen(true)}
-        className="fixed bottom-5 right-5 z-30 flex items-center gap-2 rounded-full border border-amber/40 bg-surface px-4 py-3 text-sm font-semibold text-amber shadow-lg"
-      >
-        <span aria-hidden>📻</span> Team Radio
-      </button>
-    );
-  }
+  if (!open) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-lg rounded-t-2xl border border-line bg-surface p-4 shadow-2xl">
-      <div className="flex items-center justify-between">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-amber">
-          Team Radio
-        </p>
-        <button
-          onClick={() => setOpen(false)}
-          className="px-2 text-sm text-muted"
-          aria-label="Close team radio"
-        >
-          ✕
-        </button>
-      </div>
+    <div className="fixed inset-0 z-50 flex flex-col justify-end">
+      <button
+        aria-label="Close team radio"
+        onClick={onClose}
+        className="absolute inset-0 bg-ink/70 backdrop-blur-sm"
+      />
 
-      <div ref={logRef} className="mt-3 max-h-56 overflow-y-auto">
-        {lines.length === 0 ? (
-          <p className="text-sm leading-relaxed text-muted">
-            Radio check. Ask me anything about the weekend, or tap a preset.
+      <div
+        role="dialog"
+        aria-label="Team radio"
+        className="rise relative mx-auto w-full max-w-lg rounded-t-3xl border-x border-t border-line bg-surface"
+        style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 12px)" }}
+      >
+        {/* Drag handle: tells a thumb this panel is dismissible. */}
+        <div className="flex justify-center pt-3">
+          <span className="h-1 w-10 rounded-full bg-line" />
+        </div>
+
+        <div className="flex items-center justify-between px-5 pt-3">
+          <p className="eyebrow" style={{ color: "var(--color-amber)" }}>
+            Team Radio
           </p>
-        ) : (
-          <ul className="flex flex-col gap-2.5">
-            {lines.map((l, i) => (
-              <li
-                key={i}
-                className={
-                  l.from === "you"
-                    ? "text-right text-sm text-muted"
-                    : "border-l-2 border-amber pl-3 text-sm leading-relaxed"
-                }
-              >
-                {l.text}
-                {l.source === "template" && (
-                  <span className="ml-2 text-[10px] uppercase tracking-wider text-muted">
-                    preset
-                  </span>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      <div className="mt-3 flex flex-wrap gap-2">
-        {TOPICS.map((t) => (
-          <button
-            key={t}
-            disabled={busy}
-            onClick={() => void send({ topic: t }, TOPIC_LABELS[t])}
-            className="rounded-full border border-line px-3 py-1.5 text-xs text-muted disabled:opacity-40"
-          >
-            {TOPIC_LABELS[t]}
+          <button onClick={onClose} className="-m-2 p-2 text-sm text-muted" aria-label="Close">
+            ✕
           </button>
-        ))}
-      </div>
+        </div>
 
-      <form onSubmit={submit} className="mt-3 flex gap-2">
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          maxLength={MAX_QUESTION}
-          placeholder="Ask the engineer…"
-          className="min-w-0 flex-1 rounded-xl bg-surface-2 px-3 py-2.5 text-sm outline-none placeholder:text-muted"
-        />
-        <button
-          type="submit"
-          disabled={busy || !input.trim()}
-          className="rounded-xl bg-amber px-4 py-2.5 text-sm font-bold text-ink disabled:opacity-40"
-        >
-          {busy ? "…" : "Send"}
-        </button>
-      </form>
+        <div ref={logRef} className="mt-3 max-h-[38dvh] overflow-y-auto px-5">
+          {lines.length === 0 ? (
+            <p className="text-sm leading-relaxed text-muted">
+              Radio check. Tap a question below, or ask your own.
+            </p>
+          ) : (
+            <ul className="flex flex-col gap-3 pb-1">
+              {lines.map((l, i) => (
+                <li
+                  key={i}
+                  className={
+                    l.from === "you"
+                      ? "ml-auto max-w-[85%] rounded-2xl rounded-br-sm bg-surface-2 px-3.5 py-2 text-sm"
+                      : "max-w-[92%] border-l-2 border-amber pl-3 text-sm leading-relaxed"
+                  }
+                >
+                  {l.text}
+                  {l.source === "template" && (
+                    <span className="eyebrow ml-2 align-middle">preset</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="rail mt-4 flex gap-2 overflow-x-auto px-5 pb-1">
+          {TOPICS.map((t) => (
+            <button
+              key={t}
+              disabled={busy}
+              onClick={() => void send({ topic: t }, TOPIC_LABELS[t])}
+              className="shrink-0 rounded-full border border-line px-3.5 py-2 text-xs text-muted transition-colors active:border-amber active:text-amber disabled:opacity-40"
+            >
+              {TOPIC_LABELS[t]}
+            </button>
+          ))}
+        </div>
+
+        <form onSubmit={submit} className="mt-3 flex gap-2 px-5">
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            maxLength={MAX_QUESTION}
+            placeholder="Ask the engineer…"
+            aria-label="Ask the engineer a question"
+            className="min-w-0 flex-1 rounded-xl bg-surface-2 px-3.5 py-3 text-base outline-none ring-amber/60 placeholder:text-muted focus:ring-2"
+          />
+          <button
+            type="submit"
+            disabled={busy || !input.trim()}
+            className="display rounded-xl bg-amber px-5 py-3 text-sm font-bold text-ink transition-opacity disabled:opacity-40"
+          >
+            {busy ? "…" : "Send"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
