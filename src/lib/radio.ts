@@ -1,11 +1,13 @@
 import type { RaceFacts } from "./facts.ts";
+import { formatLapList } from "./strategy.ts";
 
 /** The presets the template can answer without a model. */
-export const TOPICS = ["weather", "next", "kit", "track"] as const;
+export const TOPICS = ["weather", "strategy", "next", "kit", "track"] as const;
 export type Topic = (typeof TOPICS)[number];
 
 export const TOPIC_LABELS: Record<Topic, string> = {
   weather: "What's the weather doing?",
+  strategy: "What's the tyre call?",
   next: "What's next?",
   kit: "What should I bring?",
   track: "Tell me about the circuit",
@@ -64,6 +66,12 @@ export function radioTemplate(facts: RaceFacts, topic: Topic): string {
       } Sepang punishes anyone who packs light.`;
     }
 
+    case "strategy": {
+      const st = facts.strategy;
+      if (!st) return "No weather feed, so no track temperature — and without that there is no honest tyre call.";
+      return `Track's estimated at ${st.trackC}°C. That's a ${st.stops}-stop: ${st.compounds}, box on lap ${formatLapList(st.stopLaps)}. Model, not timing — the pit wall page shows every number behind it.`;
+    }
+
     case "track":
       return `${facts.circuit.name}. ${facts.circuit.lengthKm} km, ${facts.circuit.corners} corners, ${facts.circuit.laps} laps on Sunday. Two long straights either side of a hairpin — that's where the overtakes come from.`;
   }
@@ -98,8 +106,8 @@ export function factsForPrompt(facts: RaceFacts): string {
   }
   lines.push(
     facts.strategy
-      ? `strategy: ${facts.strategy.compound}, stops on lap ${facts.strategy.stopLaps.join(" and ")} — ${facts.strategy.note}`
-      : "strategy: not calculated yet",
+      ? `strategy_model: ${facts.strategy.stops}-stop, ${facts.strategy.compounds}, box on lap ${formatLapList(facts.strategy.stopLaps)}, computed at ${facts.strategy.trackC}C track temp`
+      : "strategy_model: no weather, so no track temperature and no call",
   );
   return lines.join("\n");
 }

@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { buildFacts } from "./facts.ts";
-import { factsForPrompt, isTopic, radioTemplate } from "./radio.ts";
+import { TOPICS, factsForPrompt, isTopic, radioTemplate } from "./radio.ts";
 import { resolveWeekend } from "./weekend.ts";
 import type { HourPoint } from "./weather.ts";
 
@@ -38,7 +38,7 @@ test("every preset answers without a model, in every phase", () => {
   for (const iso of phases) {
     for (const w of [conditions(), null]) {
       const facts = factsAt(iso, w);
-      for (const topic of ["weather", "next", "kit", "track"] as const) {
+      for (const topic of TOPICS) {
         const line = radioTemplate(facts, topic);
         assert.ok(line.length > 10, `${topic} at ${iso} produced "${line}"`);
         assert.ok(!line.includes("undefined"), `${topic} leaked undefined: ${line}`);
@@ -71,9 +71,10 @@ test("next preset reports the running session, then the gap, then the flag", () 
 test("the prompt facts block states what it does not know", () => {
   const withWeather = factsForPrompt(factsAt("2026-10-04T15:30:00+08:00"));
   assert.match(withWeather, /track_temp_c_estimated: \d+/);
-  assert.match(withWeather, /strategy: not calculated yet/);
+  assert.match(withWeather, /strategy_model: \d-stop/, "a track temperature means there is a call");
 
   const without = factsForPrompt(factsAt("2026-10-04T15:30:00+08:00", null));
   assert.match(without, /weather: unavailable/);
+  assert.match(without, /strategy_model: no weather/, "no temperature must mean no invented call");
   assert.ok(!without.includes("undefined"));
 });

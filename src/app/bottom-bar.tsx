@@ -8,6 +8,7 @@ import TeamRadio from "./team-radio";
 const LINKS = [
   { href: "/", label: "Paddock", glyph: "▣" },
   { href: "/track", label: "Circuit", glyph: "◎" },
+  { href: "/pitwall", label: "Pit Wall", glyph: "◈" },
 ];
 
 /**
