@@ -1,8 +1,8 @@
 import CircuitMap from "./circuit-map";
-import { CIRCUIT } from "@/lib/weekend";
+import { LAP_METRES } from "@/lib/circuit";
 
 export const metadata = {
-  title: "Circuit Guide · Sepang Race Engineer",
+  title: "Circuit Guide | Sepang Race Engineer",
   description:
     "All fifteen corners of Sepang International Circuit, each explaining one idea from Formula 1.",
 };
@@ -20,10 +20,9 @@ export default function TrackPage() {
           CORNERS
         </h1>
         <p className="mt-2 text-sm leading-relaxed text-muted">
-          {CIRCUIT.lengthKm} km, clockwise, two 927-metre straights. Hermann Tilke built
-          Sepang around those straights &mdash; which is why it still overtakes better than
-          most circuits built since.
-        </p>
+          {LAP_METRES} m of surveyed centre line, clockwise, north up. Two long straights
+          run the length of the circuit and meet a slow corner at each end &mdash; which is
+          why Sepang still overtakes better than most tracks built since.</p>
       </header>
       <CircuitMap />
     </main>
