@@ -14,6 +14,7 @@ import { OCTOBER_NORMALS } from "@/lib/climate";
 import { adviceFor } from "@/lib/advice";
 import { COPY } from "@/lib/copy";
 import { useLocale, useT } from "@/lib/locale-context";
+import Link from "next/link";
 
 /** Open-Meteo returns local naive timestamps; Malaysia is a fixed +08:00. */
 const msOf = (h: HourPoint) => Date.parse(`${h.time}:00+08:00`);
@@ -208,8 +209,39 @@ export default function Paddock({
         </ul>
       </section>
 
+      {/* Two destinations that are not weekend tools, so they stay off the thumb
+          bar and live here on the hub instead. */}
+      <section>
+        <p className="eyebrow">{t(C.moreTitle)}</p>
+        <div className="rule mt-2" />
+        <div className="mt-3 grid gap-2">
+          <HubCard href="/predict" glyph="◈" title={t(C.goPredict)} sub={t(C.goPredictSub)} />
+          <HubCard href="/archive" glyph="▤" title={t(C.goArchive)} sub={t(C.goArchiveSub)} />
+        </div>
+      </section>
+
       <TimeTravel frozen={frozen} />
     </main>
+  );
+}
+
+function HubCard({ href, glyph, title, sub }: { href: string; glyph: string; title: string; sub: string }) {
+  return (
+    <Link
+      href={href}
+      className="flex items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3.5 transition-colors active:border-amber"
+    >
+      <span aria-hidden className="text-lg text-amber">
+        {glyph}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="display block text-sm font-bold">{title}</span>
+        <span className="block truncate text-xs text-muted">{sub}</span>
+      </span>
+      <span aria-hidden className="text-muted">
+        ›
+      </span>
+    </Link>
   );
 }
 
