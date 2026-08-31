@@ -5,6 +5,19 @@ the 2026 Bahrain Grand Prix, held in Malaysia on **2–4 October 2026**.
 
 **Live: https://sepang-race-engineer.vercel.app**
 
+<table>
+  <tr>
+    <td width="33%"><img src="docs/screenshots/home.png" alt="Landing page: the surveyed circuit outline over the Sepang wordmark, with the six tools listed below"></td>
+    <td width="33%"><img src="docs/screenshots/circuit.png" alt="Circuit guide: all fifteen corners numbered on the surveyed centre line, with both DRS zones marked"></td>
+    <td width="33%"><img src="docs/screenshots/pitwall.png" alt="Pit wall: estimated track temperature and the two-stop strategy the model derived from it"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Home</sub></td>
+    <td align="center"><sub>Circuit — 15 corners, 1:1</sub></td>
+    <td align="center"><sub>Pit Wall — the model's call</sub></td>
+  </tr>
+</table>
+
 Bilingual (English / 中文) and dual-theme (dark / light), both chosen on the
 server from a cookie so there is no flash of the wrong language or the wrong
 ground.
