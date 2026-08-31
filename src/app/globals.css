@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* Dark is the base: this is a pit-wall screen first. Light is a second, fully
+   designed skin — a timing sheet on paper — not an inversion of the dark one.
+
+   The three-block pattern is deliberate. Tokens are defined on bare :root so a
+   colour always has a value; the media query covers "follow my device" (no
+   cookie, nothing stamped on <html>); the attribute block covers an explicit
+   choice and must come last so the toggle wins in both directions. */
 @theme {
   --color-ink: #07090d;
   --color-surface: #11151d;
@@ -12,13 +19,67 @@
   --color-wet: #38c8e6;
   --color-royal: #2a6ce0;
 
-  --font-display: var(--font-chakra), ui-sans-serif, system-ui, sans-serif;
-  --font-sans: var(--font-plex), ui-sans-serif, system-ui, sans-serif;
+  /* The map draws itself from these so the track stays legible on either ground. */
+  --color-track: #2b3442;
+  --color-track-edge: #1b212c;
+
+  --glow-sky: rgba(42, 108, 224, 0.2);
+  --glow-ground: rgba(255, 198, 30, 0.07);
+  --scanline: rgba(255, 255, 255, 0.018);
+
+  --font-display: var(--font-chakra), "PingFang SC", "Microsoft YaHei",
+    "Noto Sans CJK SC", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-plex), "PingFang SC", "Microsoft YaHei",
+    "Noto Sans CJK SC", ui-sans-serif, system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --color-ink: #f5f2ea;
+    --color-surface: #ffffff;
+    --color-surface-2: #edeae0;
+    --color-line: #d5d0c2;
+    --color-line-soft: #e4e0d4;
+    --color-text: #14181f;
+    --color-muted: #656c7a;
+    --color-amber: #9a6b00;
+    --color-wet: #0b7c96;
+    --color-royal: #1e4fa8;
+    --color-track: #3a4250;
+    --color-track-edge: #c9c4b6;
+    --glow-sky: rgba(30, 79, 168, 0.07);
+    --glow-ground: rgba(154, 107, 0, 0.06);
+    --scanline: rgba(0, 0, 0, 0.02);
+  }
+}
+
+:root[data-theme="light"] {
+  --color-ink: #f5f2ea;
+  --color-surface: #ffffff;
+  --color-surface-2: #edeae0;
+  --color-line: #d5d0c2;
+  --color-line-soft: #e4e0d4;
+  --color-text: #14181f;
+  --color-muted: #656c7a;
+  --color-amber: #9a6b00;
+  --color-wet: #0b7c96;
+  --color-royal: #1e4fa8;
+  --color-track: #3a4250;
+  --color-track-edge: #c9c4b6;
+  --glow-sky: rgba(30, 79, 168, 0.07);
+  --glow-ground: rgba(154, 107, 0, 0.06);
+  --scanline: rgba(0, 0, 0, 0.02);
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: dark light;
   -webkit-text-size-adjust: 100%;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
 }
 
 body {
@@ -30,8 +91,8 @@ body {
   overflow-x: hidden;
 }
 
-/* Atmosphere: a faint tropical haze from the top, warm ground light from below,
-   and a fine scanline so the flat black reads as a screen rather than a void. */
+/* Atmosphere: tropical haze from above, warm ground light from below, and a fine
+   scanline so a flat ground reads as a surface rather than a void. */
 body::before {
   content: "";
   position: fixed;
@@ -39,8 +100,8 @@ body::before {
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(130% 70% at 50% -15%, rgba(42, 108, 224, 0.2), transparent 62%),
-    radial-gradient(90% 45% at 100% 105%, rgba(255, 198, 30, 0.07), transparent 70%);
+    radial-gradient(130% 70% at 50% -15%, var(--glow-sky), transparent 62%),
+    radial-gradient(90% 45% at 100% 105%, var(--glow-ground), transparent 70%);
 }
 body::after {
   content: "";
@@ -51,7 +112,7 @@ body::after {
   opacity: 0.35;
   background-image: repeating-linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.018) 0 1px,
+    var(--scanline) 0 1px,
     transparent 1px 3px
   );
 }
@@ -76,14 +137,18 @@ body::after {
   text-transform: uppercase;
   color: var(--color-muted);
 }
+/* Chinese has no case and letter-spacing this wide breaks it up badly. */
+:root[lang^="zh"] .eyebrow {
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  text-transform: none;
+}
 
-/* Timing-screen rule: a hairline that fades out, used to open sections. */
 .rule {
   height: 1px;
   background: linear-gradient(to right, var(--color-line), transparent);
 }
 
-/* Horizontal chip rails scroll without showing a bar on mobile. */
 .rail {
   scrollbar-width: none;
   -ms-overflow-style: none;

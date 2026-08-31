@@ -1,6 +1,9 @@
 import StrategyBoard from "./strategy-board";
 import { getSepangWeather } from "@/lib/weather";
 import { CIRCUIT } from "@/lib/weekend";
+import { COPY } from "@/lib/copy";
+import { pick } from "@/lib/i18n";
+import { getLocale } from "@/lib/locale-server";
 
 export const metadata = {
   title: "Pit Wall | Sepang Race Engineer",
@@ -9,21 +12,21 @@ export const metadata = {
 };
 
 export default async function PitWallPage() {
-  const weather = await getSepangWeather();
+  const [weather, locale] = await Promise.all([getSepangWeather(), getLocale()]);
+  const t = (s: { en: string; zh: string }) => pick(s, locale);
+  const C = COPY.pitwall;
 
   return (
     <main className="flex flex-col gap-5">
       <header>
-        <p className="eyebrow">Pit Wall</p>
+        <p className="eyebrow">{t(C.eyebrow)}</p>
         <h1 className="display mt-1.5 text-[2.75rem] font-bold leading-[0.92] tracking-tight">
-          THE
+          {t(C.titleTop)}
           <br />
-          <span className="text-amber">CALL</span>
+          <span className="text-amber">{t(C.titleBottom)}</span>
         </h1>
         <p className="mt-3 text-sm leading-relaxed text-muted">
-          {CIRCUIT.laps} laps in tropical heat. Sepang was known as a two-stop race when most
-          circuits were one, and the reason is on this page: track temperature drives tyre wear,
-          tyre wear drives the number of stops, and everything else follows.
+          {CIRCUIT.laps} {t(C.intro)}
         </p>
       </header>
       <StrategyBoard live={weather?.now ?? null} />

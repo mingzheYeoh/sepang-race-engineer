@@ -12,16 +12,11 @@ import {
 import { estimateTrackTemp, type HourPoint, type SepangWeather } from "@/lib/weather";
 import { OCTOBER_NORMALS } from "@/lib/climate";
 import { adviceFor } from "@/lib/advice";
+import { COPY } from "@/lib/copy";
+import { useLocale, useT } from "@/lib/locale-context";
 
 /** Open-Meteo returns local naive timestamps; Malaysia is a fixed +08:00. */
 const msOf = (h: HourPoint) => Date.parse(`${h.time}:00+08:00`);
-
-const STATUS = {
-  before: "Countdown",
-  live: "Session live",
-  break: "Between sessions",
-  after: "Weekend complete",
-} as const;
 
 export default function Paddock({
   nowMs,
@@ -32,6 +27,11 @@ export default function Paddock({
   tOverride?: string;
   weather: SepangWeather | null;
 }) {
+  const t = useT();
+  const locale = useLocale();
+  const zh = locale === "zh";
+  const C = COPY.paddock;
+
   const frozen = Boolean(tOverride);
   const [now, setNow] = useState(nowMs);
   useEffect(() => {
@@ -50,8 +50,8 @@ export default function Paddock({
 
   const hourFor = (s: Session): HourPoint | null => {
     if (!weather) return null;
-    const t = Date.parse(s.start);
-    return weather.hours.find((h) => msOf(h) >= t && msOf(h) < t + 3_600_000) ?? null;
+    const at = Date.parse(s.start);
+    return weather.hours.find((h) => msOf(h) >= at && msOf(h) < at + 3_600_000) ?? null;
   };
 
   const headline = w.current ?? w.next;
@@ -62,12 +62,12 @@ export default function Paddock({
   return (
     <main className="flex flex-col gap-6">
       <header>
-        <p className="eyebrow">Race Engineer</p>
+        <p className="eyebrow">{t(C.eyebrow)}</p>
         <h1 className="display mt-1.5 text-[3.25rem] font-bold leading-[0.85] tracking-tight">
           SEPANG
         </h1>
         <p className="mt-2 text-sm text-muted">
-          2&ndash;4 October 2026 &middot; {CIRCUIT.laps} laps &middot; {CIRCUIT.lengthKm} km
+          {t(C.dates)} &middot; {CIRCUIT.laps} {t(C.laps)} &middot; {CIRCUIT.lengthKm} km
         </p>
       </header>
 
@@ -79,21 +79,23 @@ export default function Paddock({
               w.status === "live" ? "animate-pulse bg-amber" : "bg-muted"
             }`}
           />
-          <span className="eyebrow">{STATUS[w.status]}</span>
+          <span className="eyebrow">{t(C.status[w.status])}</span>
         </div>
 
         {w.status === "after" || !headline ? (
-          <p className="mt-4 text-lg leading-snug">Chequered flag. Sepang closes out the weekend.</p>
+          <p className="mt-4 text-lg leading-snug">{t(C.finished)}</p>
         ) : (
           <>
-            <p className="display mt-3 text-2xl font-bold leading-tight">{headline.name}</p>
+            <p className="display mt-3 text-2xl font-bold leading-tight">{t(headline.name)}</p>
             <p className="tabular mt-2 text-[3.25rem] font-bold leading-none text-amber">
               {formatCountdown(clock)}
             </p>
             <p className="eyebrow mt-1.5">
-              {w.current ? "remaining" : `starts ${headline.day} ${localTime(headline.start)}`}
+              {w.current
+                ? t(C.remaining)
+                : `${t(C.startsAt)} ${t(headline.day)} ${localTime(headline.start)}`}
             </p>
-            <p className="mt-4 text-sm leading-relaxed text-muted">{headline.note}</p>
+            <p className="mt-4 text-sm leading-relaxed text-muted">{t(headline.note)}</p>
           </>
         )}
       </section>
@@ -101,34 +103,31 @@ export default function Paddock({
       {/* Live conditions. The number that decides a Sepang race is the one nobody
           publishes, so we estimate it and say so. */}
       <section>
-        <p className="eyebrow">At the circuit now</p>
+        <p className="eyebrow">{t(C.conditionsTitle)}</p>
         <div className="rule mt-2" />
         {live ? (
           <>
             <div className="mt-3 grid grid-cols-4 gap-2">
-              <Stat label="Air" value={`${Math.round(live.tempC)}°`} />
-              <Stat label="Feels" value={`${Math.round(live.feelsC)}°`} />
-              <Stat label="Track" value={`${estimateTrackTemp(live)}°`} tone="amber" />
+              <Stat label={t(C.air)} value={`${Math.round(live.tempC)}°`} />
+              <Stat label={t(C.feels)} value={`${Math.round(live.feelsC)}°`} />
+              <Stat label={t(C.track)} value={`${estimateTrackTemp(live)}°`} tone="amber" />
               <Stat
-                label="Rain"
+                label={t(C.rain)}
                 value={`${live.rainChance}%`}
                 tone={live.rainChance >= 50 ? "wet" : undefined}
               />
             </div>
             <p className="mt-2.5 text-[11px] leading-relaxed text-muted">
-              Humidity {live.humidity}%. Track temperature is estimated from air temperature and
-              rainfall &mdash; no public feed measures it.
+              {t(C.humidity)} {live.humidity}%. {t(C.humidityNote)}
             </p>
           </>
         ) : (
-          <p className="mt-3 text-sm text-muted">
-            Weather service unreachable. Everything else on this page still works.
-          </p>
+          <p className="mt-3 text-sm text-muted">{t(C.weatherDown)}</p>
         )}
       </section>
 
       <section>
-        <p className="eyebrow">Weekend outlook</p>
+        <p className="eyebrow">{t(C.outlookTitle)}</p>
         <div className="rule mt-2" />
         {forecastReaches ? (
           <ul className="mt-2 flex flex-col">
@@ -139,9 +138,11 @@ export default function Paddock({
                   key={s.id}
                   className="flex items-baseline justify-between gap-3 border-b border-line-soft py-2.5 text-sm last:border-0"
                 >
-                  <span className="font-medium">{s.name}</span>
+                  <span className="font-medium">{t(s.name)}</span>
                   <span className="tabular text-muted">
-                    {h ? `${Math.round(h.tempC)}° · ${h.rainChance}% rain` : "—"}
+                    {h
+                      ? `${Math.round(h.tempC)}° · ${h.rainChance}% ${zh ? "降雨" : "rain"}`
+                      : "—"}
                   </span>
                 </li>
               );
@@ -149,26 +150,23 @@ export default function Paddock({
           </ul>
         ) : (
           <>
-            <p className="mt-3 text-sm leading-relaxed">{OCTOBER_NORMALS.summary}</p>
+            <p className="mt-3 text-sm leading-relaxed">{t(OCTOBER_NORMALS.summary)}</p>
             <div className="mt-3 grid grid-cols-3 gap-2">
-              <Stat label="Typical high" value={`${OCTOBER_NORMALS.highC}°`} />
-              <Stat label="Humidity" value={`${OCTOBER_NORMALS.humidityPct}%`} />
+              <Stat label={t(C.typicalHigh)} value={`${OCTOBER_NORMALS.highC}°`} />
+              <Stat label={t(C.humidity)} value={`${OCTOBER_NORMALS.humidityPct}%`} />
               <Stat
-                label="Storm odds"
+                label={t(C.stormOdds)}
                 value={`${Math.round(OCTOBER_NORMALS.afternoonStormChance * 100)}%`}
                 tone="wet"
               />
             </div>
-            <p className="mt-2.5 text-[11px] leading-relaxed text-muted">
-              October normals, not a forecast. The hourly forecast for race weekend opens about 16
-              days out.
-            </p>
+            <p className="mt-2.5 text-[11px] leading-relaxed text-muted">{t(C.normalsNote)}</p>
           </>
         )}
       </section>
 
       <section>
-        <p className="eyebrow">Schedule &middot; Malaysia (UTC+8)</p>
+        <p className="eyebrow">{t(C.scheduleTitle)}</p>
         <div className="rule mt-2" />
         <ul className="mt-1 flex flex-col">
           {SESSIONS.map((s) => {
@@ -185,8 +183,8 @@ export default function Paddock({
                   className={`h-8 w-0.5 shrink-0 rounded-full ${isNow ? "bg-amber" : "bg-line"}`}
                 />
                 <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-medium">{s.name}</span>
-                  <span className="block text-xs text-muted">{s.day}</span>
+                  <span className="block text-sm font-medium">{t(s.name)}</span>
+                  <span className="block text-xs text-muted">{t(s.day)}</span>
                 </span>
                 <span className="tabular text-sm text-muted">{localTime(s.start)}</span>
               </li>
@@ -196,15 +194,15 @@ export default function Paddock({
       </section>
 
       <section>
-        <p className="eyebrow">Engineer&rsquo;s notes</p>
+        <p className="eyebrow">{t(C.notesTitle)}</p>
         <div className="rule mt-2" />
         <ul className="mt-3 flex flex-col gap-3">
           {adviceFor(w, live, now).map((a) => (
-            <li key={a.text} className="flex gap-3 text-sm leading-relaxed">
+            <li key={a.text.en} className="flex gap-3 text-sm leading-relaxed">
               <span aria-hidden className="shrink-0">
                 {a.icon}
               </span>
-              <span>{a.text}</span>
+              <span>{t(a.text)}</span>
             </li>
           ))}
         </ul>
@@ -227,33 +225,33 @@ function Stat({ label, value, tone }: { label: string; value: string; tone?: "am
 
 /** Race day is unreachable on any other date, so the demo needs to travel there. */
 function TimeTravel({ frozen }: { frozen: boolean }) {
+  const t = useT();
+  const C = COPY.paddock;
   const jumps: [string, string | null][] = [
-    ["Now", null],
+    [t(C.now), null],
     ["FP1", "2026-10-02T11:45:00+08:00"],
-    ["Quali", "2026-10-03T15:20:00+08:00"],
-    ["Race", "2026-10-04T15:30:00+08:00"],
+    [t(SESSIONS[3].name), "2026-10-03T15:20:00+08:00"],
+    [t(SESSIONS[4].name), "2026-10-04T15:30:00+08:00"],
   ];
 
   return (
     <section className="rounded-2xl border border-dashed border-line p-4">
       <p className="eyebrow">
-        Time travel {frozen && <span style={{ color: "var(--color-amber)" }}>&middot; active</span>}
+        {t(C.timeTravel)}{" "}
+        {frozen && <span style={{ color: "var(--color-amber)" }}>&middot; {t(C.timeTravelActive)}</span>}
       </p>
       <div className="rail mt-2.5 flex gap-2 overflow-x-auto">
-        {jumps.map(([label, t]) => (
+        {jumps.map(([label, to]) => (
           <a
             key={label}
-            href={t ? `/?t=${encodeURIComponent(t)}` : "/"}
+            href={to ? `/?t=${encodeURIComponent(to)}` : "/"}
             className="shrink-0 rounded-full border border-line px-4 py-2 text-xs font-semibold text-muted transition-colors active:border-amber active:text-amber"
           >
             {label}
           </a>
         ))}
       </div>
-      <p className="mt-2.5 text-[11px] leading-relaxed text-muted">
-        Jump the app to any point in the race weekend &mdash; the countdown, the advice and the
-        radio all follow.
-      </p>
+      <p className="mt-2.5 text-[11px] leading-relaxed text-muted">{t(C.timeTravelNote)}</p>
     </section>
   );
 }

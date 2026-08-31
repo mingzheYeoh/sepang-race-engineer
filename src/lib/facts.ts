@@ -1,6 +1,7 @@
 import { CIRCUIT, type WeekendState } from "./weekend.ts";
 import { estimateTrackTemp, type HourPoint } from "./weather.ts";
-import { TYRES, bestPlans } from "./strategy.ts";
+import { bestPlans, type Compound } from "./strategy.ts";
+import type { L } from "./i18n.ts";
 
 /**
  * The single structured view of "what is true right now".
@@ -13,9 +14,9 @@ import { TYRES, bestPlans } from "./strategy.ts";
  */
 export type RaceFacts = {
   status: WeekendState["status"];
-  sessionName: string | null;
-  sessionNote: string | null;
-  nextSessionName: string | null;
+  sessionName: L | null;
+  sessionNote: L | null;
+  nextSessionName: L | null;
   minutesToNext: number | null;
   weather: {
     airC: number;
@@ -25,13 +26,13 @@ export type RaceFacts = {
     rainChance: number;
     wet: boolean;
   } | null;
-  circuit: { name: string; laps: number; lengthKm: number; corners: number };
+  circuit: { name: L; laps: number; lengthKm: number; corners: number };
   /**
    * The pit-wall call for the current track temperature. Absent only when there
    * is no weather to estimate a track temperature from, and both the template
    * and the prompt say so rather than inventing one.
    */
-  strategy?: { stops: number; compounds: string; stopLaps: number[]; trackC: number };
+  strategy?: { stops: number; compounds: Compound[]; stopLaps: number[]; trackC: number };
 };
 
 export function buildFacts(state: WeekendState, now: HourPoint | null): RaceFacts {
@@ -54,7 +55,7 @@ export function buildFacts(state: WeekendState, now: HourPoint | null): RaceFact
       : null,
     strategy: now ? planFor(estimateTrackTemp(now)) : undefined,
     circuit: {
-      name: CIRCUIT.name,
+      name: CIRCUIT.nameL,
       laps: CIRCUIT.laps,
       lengthKm: CIRCUIT.lengthKm,
       corners: CIRCUIT.corners,
@@ -67,7 +68,7 @@ function planFor(trackC: number) {
   const p = bestPlans(trackC, 3, 1)[0];
   return {
     stops: p.stops,
-    compounds: p.stints.map((s) => TYRES[s.compound].label).join(" → "),
+    compounds: p.stints.map((s) => s.compound),
     stopLaps: p.stopLaps,
     trackC,
   };

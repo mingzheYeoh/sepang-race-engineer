@@ -39,10 +39,13 @@ test("every preset answers without a model, in every phase", () => {
     for (const w of [conditions(), null]) {
       const facts = factsAt(iso, w);
       for (const topic of TOPICS) {
-        const line = radioTemplate(facts, topic);
-        assert.ok(line.length > 10, `${topic} at ${iso} produced "${line}"`);
-        assert.ok(!line.includes("undefined"), `${topic} leaked undefined: ${line}`);
-        assert.ok(!line.includes("NaN"), `${topic} leaked NaN: ${line}`);
+        for (const lang of ["en", "zh"] as const) {
+          const line = radioTemplate(facts, topic, lang);
+          assert.ok(line.length > 6, `${topic} (${lang}) at ${iso} produced "${line}"`);
+          assert.ok(!line.includes("undefined"), `${topic} (${lang}) leaked undefined: ${line}`);
+          assert.ok(!line.includes("NaN"), `${topic} (${lang}) leaked NaN: ${line}`);
+          assert.ok(!line.includes("[object"), `${topic} (${lang}) leaked an object: ${line}`);
+        }
       }
     }
   }

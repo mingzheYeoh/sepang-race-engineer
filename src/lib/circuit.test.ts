@@ -51,13 +51,23 @@ test("the two DRS straights are the longest run-ups on the lap", () => {
   assert.ok(longest.every((c) => c.approachM > 600), "both DRS straights should exceed 600 m");
 });
 
-test("every corner teaches a different idea and explains itself", () => {
+test("every corner teaches a different idea and explains itself, in both languages", () => {
   for (const c of CORNERS) {
-    assert.ok(c.guide.length > 40, `Turn ${c.n} guide is too thin`);
-    assert.ok(c.lesson.title.trim().length > 0, `Turn ${c.n} lesson has no title`);
-    assert.ok(c.lesson.body.length > 60, `Turn ${c.n} lesson is too thin`);
+    for (const lang of ["en", "zh"] as const) {
+      // Chinese says the same thing in fewer characters, so the floors differ.
+      const floor = lang === "en" ? 40 : 20;
+      assert.ok(c.guide[lang].length > floor, `Turn ${c.n} ${lang} guide is too thin`);
+      assert.ok(c.lesson.title[lang].trim().length > 0, `Turn ${c.n} ${lang} lesson has no title`);
+      assert.ok(c.lesson.body[lang].length > floor, `Turn ${c.n} ${lang} lesson is too thin`);
+    }
   }
-  assert.equal(new Set(CORNERS.map((c) => c.lesson.title)).size, OFFICIAL_TURNS);
+  for (const lang of ["en", "zh"] as const) {
+    assert.equal(
+      new Set(CORNERS.map((c) => c.lesson.title[lang])).size,
+      OFFICIAL_TURNS,
+      `two corners share a ${lang} lesson title`,
+    );
+  }
 });
 
 test("every corner marker sits on the surveyed line", () => {

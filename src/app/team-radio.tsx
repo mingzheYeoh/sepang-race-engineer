@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { RadioReply } from "./api/radio/route";
 import { MAX_QUESTION, TOPICS, TOPIC_LABELS, type Topic } from "@/lib/radio";
+import { COPY } from "@/lib/copy";
+import { useLocale, useT } from "@/lib/locale-context";
 
 type Line = { from: "you" | "engineer"; text: string; source?: RadioReply["source"] };
 
@@ -11,6 +13,8 @@ export default function TeamRadio({ open, onClose }: { open: boolean; onClose: (
   // Read from the URL rather than a prop so the radio stays in sync with the
   // page's time override on every route.
   const tOverride = useSearchParams().get("t") ?? undefined;
+  const locale = useLocale();
+  const t = useT();
   const [lines, setLines] = useState<Line[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -30,7 +34,7 @@ export default function TeamRadio({ open, onClose }: { open: boolean; onClose: (
       const res = await fetch("/api/radio", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ ...payload, t: tOverride }),
+        body: JSON.stringify({ ...payload, t: tOverride, locale }),
       });
       const data = (await res.json()) as RadioReply | { error: string };
       setLines((l) => [
@@ -40,7 +44,7 @@ export default function TeamRadio({ open, onClose }: { open: boolean; onClose: (
           : { from: "engineer", text: data.error },
       ]);
     } catch {
-      setLines((l) => [...l, { from: "engineer", text: "Radio's cut out. Check your connection." }]);
+      setLines((l) => [...l, { from: "engineer", text: t(COPY.radio.dropped) }]);
     } finally {
       setBusy(false);
       requestAnimationFrame(() =>
@@ -62,7 +66,7 @@ export default function TeamRadio({ open, onClose }: { open: boolean; onClose: (
   return (
     <div className="fixed inset-0 z-50 flex flex-col justify-end">
       <button
-        aria-label="Close team radio"
+        aria-label={t(COPY.radio.closeRadio)}
         onClick={onClose}
         className="absolute inset-0 bg-ink/70 backdrop-blur-sm"
       />
@@ -80,9 +84,9 @@ export default function TeamRadio({ open, onClose }: { open: boolean; onClose: (
 
         <div className="flex items-center justify-between px-5 pt-3">
           <p className="eyebrow" style={{ color: "var(--color-amber)" }}>
-            Team Radio
+            {t(COPY.radio.title)}
           </p>
-          <button onClick={onClose} className="-m-2 p-2 text-sm text-muted" aria-label="Close">
+          <button onClick={onClose} className="-m-2 p-2 text-sm text-muted" aria-label={t(COPY.radio.close)}>
             ✕
           </button>
         </div>
@@ -90,7 +94,7 @@ export default function TeamRadio({ open, onClose }: { open: boolean; onClose: (
         <div ref={logRef} className="mt-3 max-h-[38dvh] overflow-y-auto px-5">
           {lines.length === 0 ? (
             <p className="text-sm leading-relaxed text-muted">
-              Radio check. Tap a question below, or ask your own.
+              {t(COPY.radio.check)}
             </p>
           ) : (
             <ul className="flex flex-col gap-3 pb-1">
@@ -105,7 +109,7 @@ export default function TeamRadio({ open, onClose }: { open: boolean; onClose: (
                 >
                   {l.text}
                   {l.source === "template" && (
-                    <span className="eyebrow ml-2 align-middle">preset</span>
+                    <span className="eyebrow ml-2 align-middle">{t(COPY.radio.presetTag)}</span>
                   )}
                 </li>
               ))}
@@ -114,14 +118,14 @@ export default function TeamRadio({ open, onClose }: { open: boolean; onClose: (
         </div>
 
         <div className="rail mt-4 flex gap-2 overflow-x-auto px-5 pb-1">
-          {TOPICS.map((t) => (
+          {TOPICS.map((topic) => (
             <button
-              key={t}
+              key={topic}
               disabled={busy}
-              onClick={() => void send({ topic: t }, TOPIC_LABELS[t])}
+              onClick={() => void send({ topic: topic }, t(TOPIC_LABELS[topic]))}
               className="shrink-0 rounded-full border border-line px-3.5 py-2 text-xs text-muted transition-colors active:border-amber active:text-amber disabled:opacity-40"
             >
-              {TOPIC_LABELS[t]}
+              {t(TOPIC_LABELS[topic])}
             </button>
           ))}
         </div>
@@ -131,8 +135,8 @@ export default function TeamRadio({ open, onClose }: { open: boolean; onClose: (
             value={input}
             onChange={(e) => setInput(e.target.value)}
             maxLength={MAX_QUESTION}
-            placeholder="Ask the engineer…"
-            aria-label="Ask the engineer a question"
+            placeholder={t(COPY.radio.placeholder)}
+            aria-label={t(COPY.radio.inputLabel)}
             className="min-w-0 flex-1 rounded-xl bg-surface-2 px-3.5 py-3 text-base outline-none ring-amber/60 placeholder:text-muted focus:ring-2"
           />
           <button
@@ -140,7 +144,7 @@ export default function TeamRadio({ open, onClose }: { open: boolean; onClose: (
             disabled={busy || !input.trim()}
             className="display rounded-xl bg-amber px-5 py-3 text-sm font-bold text-ink transition-opacity disabled:opacity-40"
           >
-            {busy ? "…" : "Send"}
+            {busy ? "…" : t(COPY.radio.send)}
           </button>
         </form>
       </div>

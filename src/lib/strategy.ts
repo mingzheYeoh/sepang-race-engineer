@@ -1,4 +1,5 @@
 import { CIRCUIT } from "./weekend.ts";
+import { DEFAULT_LOCALE, type L, type Locale } from "./i18n.ts";
 
 /**
  * A transparent tyre and pit-stop model for Sepang.
@@ -34,14 +35,33 @@ export const TEMP_SENSITIVITY = 0.035;
 /** Past its useful life a tyre falls off a cliff rather than fading linearly. */
 export const CLIFF_MULTIPLIER = 3;
 
+/** Compound names live here, with the numbers they belong to, not in the UI copy. */
 export const TYRES: Record<
   Compound,
-  { label: string; offsetS: number; degSPerLap: number; lifeLaps: number; colour: string }
+  { label: L; offsetS: number; degSPerLap: number; lifeLaps: number; colour: string }
 > = {
   // Quicker when new, gone soonest. Life figures are at the reference temperature.
-  soft: { label: "Soft", offsetS: -0.8, degSPerLap: 0.13, lifeLaps: 18, colour: "#e8483f" },
-  medium: { label: "Medium", offsetS: 0.0, degSPerLap: 0.08, lifeLaps: 28, colour: "#ffc61e" },
-  hard: { label: "Hard", offsetS: 0.7, degSPerLap: 0.05, lifeLaps: 40, colour: "#e6ebf2" },
+  soft: {
+    label: { en: "Soft", zh: "软胎" },
+    offsetS: -0.8,
+    degSPerLap: 0.13,
+    lifeLaps: 18,
+    colour: "#e8483f",
+  },
+  medium: {
+    label: { en: "Medium", zh: "中性胎" },
+    offsetS: 0.0,
+    degSPerLap: 0.08,
+    lifeLaps: 28,
+    colour: "#ffc61e",
+  },
+  hard: {
+    label: { en: "Hard", zh: "硬胎" },
+    offsetS: 0.7,
+    degSPerLap: 0.05,
+    lifeLaps: 40,
+    colour: "#e6ebf2",
+  },
 };
 
 /** Formula 1 requires two different dry compounds in a dry race. */
@@ -195,9 +215,13 @@ export function formatDelta(deltaS: number): string {
   return `${deltaS >= 0 ? "+" : ""}${deltaS.toFixed(1)}s`;
 }
 
-/** "13, 30 and 43" rather than "13 and 30 and 43". */
-export function formatLapList(laps: number[]): string {
+/**
+ * "13, 30 and 43" rather than "13 and 30 and 43" — and never an English "and"
+ * inside a Chinese sentence, which is what a locale-blind join produces.
+ */
+export function formatLapList(laps: number[], locale: Locale = DEFAULT_LOCALE): string {
   if (laps.length === 0) return "";
   if (laps.length === 1) return String(laps[0]);
+  if (locale === "zh") return laps.join("、");
   return `${laps.slice(0, -1).join(", ")} and ${laps[laps.length - 1]}`;
 }

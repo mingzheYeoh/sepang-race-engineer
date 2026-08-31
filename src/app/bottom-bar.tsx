@@ -4,11 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import TeamRadio from "./team-radio";
+import { COPY } from "@/lib/copy";
+import { useT } from "@/lib/locale-context";
+import type { L } from "@/lib/i18n";
 
-const LINKS = [
-  { href: "/", label: "Paddock", glyph: "▣" },
-  { href: "/track", label: "Circuit", glyph: "◎" },
-  { href: "/pitwall", label: "Pit Wall", glyph: "◈" },
+const LINKS: { href: string; label: L; glyph: string }[] = [
+  { href: "/", label: COPY.nav.paddock, glyph: "▣" },
+  { href: "/track", label: COPY.nav.circuit, glyph: "◎" },
+  { href: "/pitwall", label: COPY.nav.pitwall, glyph: "◈" },
 ];
 
 /**
@@ -16,11 +19,12 @@ const LINKS = [
  *
  * A phone is held one-handed at a circuit, so the controls live where the thumb
  * already is. It also settles a collision: a floating radio button and a nav bar
- * were fighting for the same corner, so the radio became a third tab instead.
+ * were fighting for the same corner, so the radio became a fourth tab instead.
  */
 export default function BottomBar() {
   const [radioOpen, setRadioOpen] = useState(false);
   const path = usePathname();
+  const t = useT();
 
   return (
     <>
@@ -43,14 +47,12 @@ export default function BottomBar() {
                   active ? "text-amber" : "text-muted"
                 }`}
               >
-                {active && (
-                  <span className="absolute inset-x-6 top-0 h-0.5 rounded-full bg-amber" />
-                )}
+                {active && <span className="absolute inset-x-5 top-0 h-0.5 rounded-full bg-amber" />}
                 <span aria-hidden className="text-base leading-none">
                   {l.glyph}
                 </span>
                 <span className="eyebrow" style={{ color: "inherit" }}>
-                  {l.label}
+                  {t(l.label)}
                 </span>
               </Link>
             );
@@ -63,12 +65,12 @@ export default function BottomBar() {
               radioOpen ? "text-amber" : "text-muted"
             }`}
           >
-            {radioOpen && <span className="absolute inset-x-6 top-0 h-0.5 rounded-full bg-amber" />}
+            {radioOpen && <span className="absolute inset-x-5 top-0 h-0.5 rounded-full bg-amber" />}
             <span aria-hidden className="text-base leading-none">
               ⣿
             </span>
             <span className="eyebrow" style={{ color: "inherit" }}>
-              Radio
+              {t(COPY.nav.radio)}
             </span>
           </button>
         </div>

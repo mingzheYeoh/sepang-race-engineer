@@ -2,64 +2,82 @@
 // Malaysia is UTC+8 year-round with no daylight saving, so fixed +08:00 offsets are
 // exact and we need no date library.
 
+import type { L } from "./i18n.ts";
+
 export type SessionId = "FP1" | "FP2" | "FP3" | "QUALI" | "RACE";
 
 export type Session = {
   id: SessionId;
-  name: string;
+  name: L;
   /** Local Malaysian day label. */
-  day: "Friday" | "Saturday" | "Sunday";
+  day: L;
   start: string; // ISO with +08:00
   minutes: number;
   /** Why this session matters to a fan watching it. */
-  note: string;
+  note: L;
 };
 
 export const SESSIONS: Session[] = [
   {
     id: "FP1",
-    name: "Practice 1",
-    day: "Friday",
+    name: { en: "Practice 1", zh: "第一次自由练习" },
+    day: { en: "Friday", zh: "周五" },
     start: "2026-10-02T11:30:00+08:00",
     minutes: 60,
-    note: "Morning running. Cooler track than race conditions, so the lap times lie.",
+    note: {
+      en: "Morning running. Cooler track than race conditions, so the lap times lie.",
+      zh: "上午出场。赛道比正赛时凉，所以圈速会骗人。",
+    },
   },
   {
     id: "FP2",
-    name: "Practice 2",
-    day: "Friday",
+    name: { en: "Practice 2", zh: "第二次自由练习" },
+    day: { en: "Friday", zh: "周五" },
     start: "2026-10-02T15:00:00+08:00",
     minutes: 60,
-    note: "Runs at race o'clock. This is the only representative long-run data all weekend.",
+    note: {
+      en: "Runs at race o'clock. This is the only representative long-run data all weekend.",
+      zh: "在与正赛同一时段进行。整个周末只有这一次能拿到有参考价值的长距离数据。",
+    },
   },
   {
     id: "FP3",
-    name: "Practice 3",
-    day: "Saturday",
+    name: { en: "Practice 3", zh: "第三次自由练习" },
+    day: { en: "Saturday", zh: "周六" },
     start: "2026-10-03T11:30:00+08:00",
     minutes: 60,
-    note: "Final setup window before parc ferme. Teams chase one-lap pace here.",
+    note: {
+      en: "Final setup window before parc ferme. Teams chase one-lap pace here.",
+      zh: "进入 parc ferme 前最后的调校窗口。车队在这里追单圈速度。",
+    },
   },
   {
     id: "QUALI",
-    name: "Qualifying",
-    day: "Saturday",
+    name: { en: "Qualifying", zh: "排位赛" },
+    day: { en: "Saturday", zh: "周六" },
     start: "2026-10-03T15:00:00+08:00",
     minutes: 60,
-    note: "Q1, Q2, Q3. Track position matters at Sepang, but two long straights keep overtaking alive.",
+    note: {
+      en: "Q1, Q2, Q3. Track position matters at Sepang, but two long straights keep overtaking alive.",
+      zh: "Q1、Q2、Q3。雪邦看重发车位置，但两条长直道让超车始终有戏。",
+    },
   },
   {
     id: "RACE",
-    name: "Grand Prix",
-    day: "Sunday",
+    name: { en: "Grand Prix", zh: "正赛" },
+    day: { en: "Sunday", zh: "周日" },
     start: "2026-10-04T15:00:00+08:00",
     minutes: 120,
-    note: "56 laps. A 15:00 start puts the race squarely in the afternoon thunderstorm window.",
+    note: {
+      en: "56 laps. A 15:00 start puts the race squarely in the afternoon thunderstorm window.",
+      zh: "56 圈。15:00 发车，正好落在午后雷暴的高发时段。",
+    },
   },
 ];
 
 export const CIRCUIT = {
   name: "Sepang International Circuit",
+  nameL: { en: "Sepang International Circuit", zh: "雪邦国际赛道" } as L,
   laps: 56,
   lengthKm: 5.543,
   corners: 15,

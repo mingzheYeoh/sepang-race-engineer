@@ -13,8 +13,10 @@ export const OCTOBER_NORMALS = {
   monthlyRainMm: 250,
   /** Share of October afternoons with a thunderstorm in the 14:00-18:00 window. */
   afternoonStormChance: 0.6,
-  summary:
-    "October sits in the monsoon transition. Mornings run hot and bright; convective storms build through the afternoon and most often break between 15:00 and 18:00 - the exact window the Grand Prix runs in.",
+  summary: {
+    en: "October sits in the monsoon transition. Mornings run hot and bright; convective storms build through the afternoon and most often break between 15:00 and 18:00 — the exact window the Grand Prix runs in.",
+    zh: "十月正处季风转换期。上午炎热晴朗，午后对流云团逐渐堆积，最常在 15:00 到 18:00 之间落下——正是正赛进行的时段。",
+  },
 } as const;
 
 /** Forecast horizon of the Open-Meteo free tier, in days. */

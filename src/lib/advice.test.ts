@@ -57,5 +57,5 @@ test("something useful is always returned, even with no weather", () => {
   const t = at("2026-10-04T18:00:00+08:00");
   const list = adviceFor(resolveWeekend(t), null, t);
   assert.ok(list.length > 0);
-  assert.ok(list.every((a) => a.text.length > 0 && a.icon.length > 0));
+  assert.ok(list.every((a) => a.text.en.length > 0 && a.text.zh.length > 0 && a.icon.length > 0));
 });

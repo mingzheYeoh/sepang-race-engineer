@@ -97,4 +97,8 @@ test("stop laps read as a list, not a chain of ands", async () => {
   assert.equal(formatLapList([19]), "19");
   assert.equal(formatLapList([19, 38]), "19 and 38");
   assert.equal(formatLapList([13, 30, 43]), "13, 30 and 43");
+  // A locale-blind join would drop an English "and" into a Chinese sentence.
+  assert.equal(formatLapList([19, 38], "zh"), "19、38");
+  assert.equal(formatLapList([13, 30, 43], "zh"), "13、30、43");
+  assert.ok(!formatLapList([13, 30, 43], "zh").includes("and"));
 });
