@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // A stray package-lock.json in a parent directory otherwise makes Turbopack
+  // guess the wrong workspace root.
+  turbopack: { root: import.meta.dirname },
 };
 
 export default nextConfig;

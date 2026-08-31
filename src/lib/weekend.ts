@@ -1,0 +1,141 @@
+// Sepang Grand Prix weekend, 2-4 October 2026 (organiser-designated reference weekend).
+// Malaysia is UTC+8 year-round with no daylight saving, so fixed +08:00 offsets are
+// exact and we need no date library.
+
+export type SessionId = "FP1" | "FP2" | "FP3" | "QUALI" | "RACE";
+
+export type Session = {
+  id: SessionId;
+  name: string;
+  /** Local Malaysian day label. */
+  day: "Friday" | "Saturday" | "Sunday";
+  start: string; // ISO with +08:00
+  minutes: number;
+  /** Why this session matters to a fan watching it. */
+  note: string;
+};
+
+export const SESSIONS: Session[] = [
+  {
+    id: "FP1",
+    name: "Practice 1",
+    day: "Friday",
+    start: "2026-10-02T11:30:00+08:00",
+    minutes: 60,
+    note: "Morning running. Cooler track than race conditions, so the lap times lie.",
+  },
+  {
+    id: "FP2",
+    name: "Practice 2",
+    day: "Friday",
+    start: "2026-10-02T15:00:00+08:00",
+    minutes: 60,
+    note: "Runs at race o'clock. This is the only representative long-run data all weekend.",
+  },
+  {
+    id: "FP3",
+    name: "Practice 3",
+    day: "Saturday",
+    start: "2026-10-03T11:30:00+08:00",
+    minutes: 60,
+    note: "Final setup window before parc ferme. Teams chase one-lap pace here.",
+  },
+  {
+    id: "QUALI",
+    name: "Qualifying",
+    day: "Saturday",
+    start: "2026-10-03T15:00:00+08:00",
+    minutes: 60,
+    note: "Q1, Q2, Q3. Track position matters at Sepang, but two long straights keep overtaking alive.",
+  },
+  {
+    id: "RACE",
+    name: "Grand Prix",
+    day: "Sunday",
+    start: "2026-10-04T15:00:00+08:00",
+    minutes: 120,
+    note: "56 laps. A 15:00 start puts the race squarely in the afternoon thunderstorm window.",
+  },
+];
+
+export const CIRCUIT = {
+  name: "Sepang International Circuit",
+  laps: 56,
+  lengthKm: 5.543,
+  corners: 15,
+  lat: 2.7603,
+  lon: 101.7382,
+  timezone: "Asia/Kuala_Lumpur",
+} as const;
+
+export type WeekendStatus = "before" | "live" | "break" | "after";
+
+export type WeekendState = {
+  status: WeekendStatus;
+  /** The session running right now, if any. */
+  current: Session | null;
+  /** The next session that has not finished, if any. */
+  next: Session | null;
+  /** Milliseconds until `next` starts. Negative while `next` is running. */
+  msToNext: number | null;
+};
+
+const endOf = (s: Session) => Date.parse(s.start) + s.minutes * 60_000;
+
+/**
+ * Resolve where `now` sits in the race weekend.
+ *
+ * Gaps between sessions are their own status ("break") rather than being folded
+ * into the previous session, because the useful thing to show a fan at 13:00 on
+ * Friday is a countdown to FP2, not a finished FP1.
+ */
+export function resolveWeekend(now: Date | number = Date.now()): WeekendState {
+  const t = typeof now === "number" ? now : now.getTime();
+
+  const current = SESSIONS.find((s) => t >= Date.parse(s.start) && t < endOf(s)) ?? null;
+  const next = SESSIONS.find((s) => t < endOf(s)) ?? null;
+
+  let status: WeekendStatus;
+  if (current) status = "live";
+  else if (!next) status = "after";
+  else if (next.id === SESSIONS[0].id) status = "before";
+  else status = "break";
+
+  return {
+    status,
+    current,
+    next,
+    msToNext: next ? Date.parse(next.start) - t : null,
+  };
+}
+
+/**
+ * Read the `?t=` demo override. The race-day interface is unreachable outside
+ * 2-4 October without it, which would make the app impossible to demo or test
+ * on any other date.
+ */
+export function overrideNow(t: string | undefined | null): number {
+  if (!t) return Date.now();
+  const parsed = Date.parse(t);
+  return Number.isNaN(parsed) ? Date.now() : parsed;
+}
+
+export function formatCountdown(ms: number): string {
+  if (ms <= 0) return "00:00:00";
+  const total = Math.floor(ms / 1000);
+  const d = Math.floor(total / 86400);
+  const h = Math.floor((total % 86400) / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return d > 0 ? `${d}d ${pad(h)}:${pad(m)}:${pad(s)}` : `${pad(h)}:${pad(m)}:${pad(s)}`;
+}
+
+export function localTime(iso: string): string {
+  return new Intl.DateTimeFormat("en-MY", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: CIRCUIT.timezone,
+  }).format(Date.parse(iso));
+}
