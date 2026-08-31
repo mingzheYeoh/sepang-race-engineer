@@ -27,7 +27,7 @@ export default function BackLink() {
   return (
     <Link
       href={tOverride ? `/?t=${encodeURIComponent(tOverride)}` : "/"}
-      className="-ml-1 flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold text-muted transition-colors hover:text-amber"
+      className="-ml-2 flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-muted transition-colors hover:text-amber"
     >
       <span aria-hidden className="text-sm leading-none">
         ←

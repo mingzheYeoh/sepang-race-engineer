@@ -32,7 +32,7 @@ export default function BottomBar() {
 
       <nav
         className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-ink/95 backdrop-blur-md"
-        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+        style={{ paddingBottom: "max(env(safe-area-inset-bottom), 10px)" }}
         aria-label="Main"
       >
         <div className="mx-auto flex max-w-lg">

@@ -84,6 +84,13 @@
 html {
   color-scheme: dark light;
   -webkit-text-size-adjust: 100%;
+  /* iOS and Android both paint a grey box over a tapped control. Every
+     interactive element here already has its own :active or focus treatment, so
+     the platform flash only makes taps look like rendering glitches. */
+  -webkit-tap-highlight-color: transparent;
+  /* Stops the whole page rubber-banding on iOS when a sheet is dragged past its
+     end; scrollable panels opt back in where scrolling is the point. */
+  overscroll-behavior-y: none;
 }
 :root[data-theme="dark"] {
   color-scheme: dark;

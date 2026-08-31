@@ -93,7 +93,7 @@ export default function TeamRadio({ open, onClose }: { open: boolean; onClose: (
         role="dialog"
         aria-label="Team radio"
         className="rise relative mx-auto flex w-full max-w-lg flex-col rounded-t-3xl border-x border-t border-line bg-surface"
-        style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 12px)" }}
+        style={{ paddingBottom: "calc(max(env(safe-area-inset-bottom), 10px) + 12px)" }}
       >
         {/* Drag handle: tells a thumb this panel is dismissible. */}
         <div className="flex justify-center pt-3">
@@ -115,14 +115,14 @@ export default function TeamRadio({ open, onClose }: { open: boolean; onClose: (
             <button
               onClick={() => setLines([])}
               disabled={busy}
-              className="rounded-full px-2 py-1 text-[11px] text-muted transition-colors hover:text-text disabled:opacity-40"
+              className="flex min-h-10 items-center rounded-full px-3 text-[11px] text-muted transition-colors hover:text-text disabled:opacity-40"
             >
               {t(COPY.radio.clear)}
             </button>
           )}
           <button
             onClick={onClose}
-            className="-mr-2 flex size-8 items-center justify-center rounded-full text-sm text-muted transition-colors hover:text-text"
+            className="-mr-2 flex size-11 items-center justify-center rounded-full text-sm text-muted transition-colors hover:text-text"
             aria-label={t(COPY.radio.close)}
           >
             <span aria-hidden>✕</span>
@@ -132,7 +132,7 @@ export default function TeamRadio({ open, onClose }: { open: boolean; onClose: (
         {/* A floor on the height stops the panel jumping as the first lines land. */}
         <div
           ref={logRef}
-          className="mt-3 max-h-[38dvh] min-h-[7rem] overflow-y-auto px-5"
+          className="mt-3 max-h-[38dvh] min-h-[7rem] overflow-y-auto overscroll-contain px-5"
           aria-live="polite"
         >
           {lines.length === 0 ? (
@@ -191,7 +191,7 @@ export default function TeamRadio({ open, onClose }: { open: boolean; onClose: (
                 key={topic}
                 disabled={busy}
                 onClick={() => void send({ topic }, t(TOPIC_LABELS[topic]))}
-                className="shrink-0 rounded-full border border-line px-3.5 py-2 text-xs text-muted transition-colors hover:border-amber hover:text-amber active:border-amber active:text-amber disabled:opacity-40"
+                className="flex min-h-10 shrink-0 items-center rounded-full border border-line px-4 text-xs text-muted transition-colors hover:border-amber hover:text-amber active:border-amber active:text-amber disabled:opacity-40"
               >
                 {t(TOPIC_LABELS[topic])}
               </button>

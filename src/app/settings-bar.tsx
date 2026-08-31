@@ -55,7 +55,7 @@ export default function SettingsBar({ locale, theme }: { locale: Locale; theme: 
             onClick={() => chooseLocale(l)}
             aria-pressed={locale === l}
             lang={htmlLang[l]}
-            className={`px-3 py-1.5 text-xs font-semibold transition-colors ${
+            className={`flex min-h-11 items-center px-4 text-xs font-semibold transition-colors ${
               locale === l ? "bg-amber text-ink" : "text-muted"
             }`}
           >
@@ -67,7 +67,7 @@ export default function SettingsBar({ locale, theme }: { locale: Locale; theme: 
       <button
         onClick={toggleTheme}
         aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
-        className="flex size-8 items-center justify-center rounded-full border border-line text-sm text-muted"
+        className="flex size-11 items-center justify-center rounded-full border border-line text-sm text-muted"
       >
         <span aria-hidden>{theme === "dark" ? "☀" : "☾"}</span>
       </button>

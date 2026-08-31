@@ -9,6 +9,7 @@ import { COPY } from "@/lib/copy";
 import type { Locale } from "@/lib/i18n";
 import {
   LOCALE_COOKIE,
+  THEME_INK,
   THEME_COOKIE,
   htmlLang,
   pick,
@@ -60,16 +61,37 @@ export async function generateMetadata(): Promise<Metadata> {
     // into is part of the feature. opengraph-image.tsx draws it.
     openGraph: { title, description, type: "website", locale: ogLocale[locale] },
     twitter: { card: "summary_large_image", title, description },
+    // An installed iOS tile opens without browser chrome, and gets the app's
+    // own name under the icon instead of the page title.
+    appleWebApp: { capable: true, title: pick(COPY.meta.appTitle, locale), statusBarStyle: "black-translucent" },
   };
 }
 
 const ogLocale: Record<Locale, string> = { en: "en_US", zh: "zh_CN" };
 
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  viewportFit: "cover",
-};
+/**
+ * `themeColor` follows the chosen theme rather than a media query, because the
+ * theme here is a cookie, not the device setting. It paints Chrome's address bar
+ * on Android and the status bar of an installed iOS tile; a media query would
+ * leave a light page wearing a black status bar whenever the two disagree.
+ */
+export async function generateViewport(): Promise<Viewport> {
+  const jar = await cookies();
+  const theme = readTheme(jar.get(THEME_COOKIE)?.value);
+  return {
+    width: "device-width",
+    initialScale: 1,
+    // The tab bar sits on the home indicator, so the page must own that strip.
+    viewportFit: "cover",
+    themeColor: theme
+      ? THEME_INK[theme]
+      : [
+          { media: "(prefers-color-scheme: dark)", color: THEME_INK.dark },
+          { media: "(prefers-color-scheme: light)", color: THEME_INK.light },
+        ],
+  };
+}
+
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const jar = await cookies();
@@ -85,7 +107,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           {/* Bottom padding clears the tab bar plus the home indicator. */}
           <div
             className="relative z-10 mx-auto flex min-h-dvh max-w-lg flex-col px-5 pt-5"
-            style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 92px)" }}
+            style={{ paddingBottom: "calc(max(env(safe-area-inset-bottom), 10px) + 92px)" }}
           >
             {/* Back on the left, settings on the right, one row, every page. */}
             <div className="mb-4 flex items-center justify-between gap-2">

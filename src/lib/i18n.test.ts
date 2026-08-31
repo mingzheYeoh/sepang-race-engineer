@@ -5,7 +5,8 @@ import { CORNERS, SOURCES } from "./circuit.ts";
 import { SESSIONS } from "./weekend.ts";
 import { OCTOBER_NORMALS } from "./climate.ts";
 import { TOPIC_LABELS } from "./radio.ts";
-import { LOCALES, isLocale, isTheme, readLocale, readTheme } from "./i18n.ts";
+import { LOCALES, THEME_INK, isLocale, isTheme, readLocale, readTheme } from "./i18n.ts";
+import { readFileSync } from "node:fs";
 
 /** Anything shaped like { en, zh } is a translated string and must be complete. */
 function walk(node: unknown, path: string, found: string[]) {
@@ -64,4 +65,19 @@ test("placeholders fill, and unknown ones do not leak", () => {
   assert.equal(fill("a %X% b", { X: 1 }), "a 1 b");
   assert.equal(fill("a %Y% b", { X: 1 }), "a  b");
   assert.equal(fill("no tokens", {}), "no tokens");
+});
+
+test("the theme-color meta matches the ground the stylesheet actually paints", () => {
+  // A literal has to be handed to the meta tag, so this is the only copy of a
+  // colour in the codebase that lives in two places. Pin them together.
+  const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
+  const inkIn = (block: string) => {
+    const start = css.indexOf(block);
+    assert.ok(start >= 0, `${block} is gone from globals.css`);
+    const m = /--color-ink:\s*(#[0-9a-f]{6})/i.exec(css.slice(start, css.indexOf("}", start)));
+    assert.ok(m, `${block} no longer sets --color-ink`);
+    return m[1].toLowerCase();
+  };
+  assert.equal(THEME_INK.dark, inkIn("@theme {"));
+  assert.equal(THEME_INK.light, inkIn(':root[data-theme="light"] {'));
 });

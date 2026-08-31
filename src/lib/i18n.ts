@@ -40,3 +40,11 @@ export const pick = (s: L, locale: Locale): string => s[locale];
 
 /** `<html lang>` needs the full tag, not the short code. */
 export const htmlLang: Record<Locale, string> = { en: "en", zh: "zh-Hans" };
+
+/**
+ * The page ground per theme, duplicated out of globals.css because the
+ * `theme-color` meta tag has to be a literal — a CSS variable means nothing to
+ * the Android address bar or an iOS status bar. `i18n.test.ts` reads the
+ * stylesheet and fails if these two copies ever disagree.
+ */
+export const THEME_INK: Record<Theme, string> = { dark: "#07090d", light: "#f5f2ea" };
