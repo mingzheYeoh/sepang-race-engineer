@@ -94,12 +94,11 @@ export function radioTemplate(
           zh: "计时屏上现在什么都没有。",
         });
       }
-      const h = Math.floor(facts.minutesToNext / 60);
-      const m = facts.minutesToNext % 60;
+      const gap = formatGap(facts.minutesToNext, locale);
       const name = pick(facts.nextSessionName, locale);
       return zh
-        ? `${name}还有 ${h > 0 ? `${h} 小时 ` : ""}${m} 分钟开始。自己也进站休息一下，找个阴凉地方。`
-        : `${name} in ${h > 0 ? `${h}h ${m}m` : `${m} minutes`}. Box yourself, get some shade.`;
+        ? `${name}还有 ${gap} 开始。自己也进站休息一下，找个阴凉地方。`
+        : `${name} in ${gap}. Box yourself, get some shade.`;
     }
 
     case "kit": {
@@ -126,6 +125,26 @@ export function radioTemplate(
   }
 }
 
+/**
+ * A gap in words, at whatever scale it actually is.
+ *
+ * `minutesToNext` is raw minutes, which reads fine for a session an hour away
+ * and falls apart a month out: the model relayed "44967 minutes away" and the
+ * template rendered "749h 27m". The Paddock's own countdown had days all along —
+ * only this path had flattened them away.
+ */
+export function formatGap(minutes: number, locale: Locale = DEFAULT_LOCALE): string {
+  const d = Math.floor(minutes / 1440);
+  const h = Math.floor((minutes % 1440) / 60);
+  const m = minutes % 60;
+  if (locale === "zh") {
+    if (d > 0) return `${d} 天${h > 0 ? ` ${h} 小时` : ""}`;
+    return h > 0 ? `${h} 小时 ${m} 分钟` : `${m} 分钟`;
+  }
+  if (d > 0) return `${d}d${h > 0 ? ` ${h}h` : ""}`;
+  return h > 0 ? `${h}h ${m}m` : `${m} minutes`;
+}
+
 /** Shown when free text arrives and no model is configured to answer it. */
 export function noModelReply(locale: Locale = DEFAULT_LOCALE): string {
   return pick(
@@ -143,7 +162,7 @@ export function factsForPrompt(facts: RaceFacts): string {
     `weekend_status: ${facts.status}`,
     `session_running: ${facts.sessionName ? facts.sessionName.en : "none"}`,
     `next_session: ${facts.nextSessionName ? facts.nextSessionName.en : "none"}`,
-    `minutes_to_next: ${facts.minutesToNext ?? "unknown"}`,
+    `time_to_next: ${facts.minutesToNext === null ? "unknown" : formatGap(facts.minutesToNext, "en")}`,
     `circuit: ${facts.circuit.name.en}, ${facts.circuit.lengthKm} km, ${facts.circuit.corners} corners, ${facts.circuit.laps} race laps`,
   ];
   if (facts.weather) {

@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { buildFacts } from "./facts.ts";
-import { TOPICS, factsForPrompt, isTopic, radioTemplate } from "./radio.ts";
+import { TOPICS, factsForPrompt, formatGap, isTopic, radioTemplate } from "./radio.ts";
 import { resolveWeekend } from "./weekend.ts";
 import type { HourPoint } from "./weather.ts";
 
@@ -80,4 +80,20 @@ test("the prompt facts block states what it does not know", () => {
   assert.match(without, /weather: unavailable/);
   assert.match(without, /strategy_model: no weather/, "no temperature must mean no invented call");
   assert.ok(!without.includes("undefined"));
+});
+
+test("a gap is stated at the scale it actually is, not always in minutes", () => {
+  // The bug this pins: a month out, minutes are technically true and useless.
+  assert.equal(formatGap(44967), "31d 5h");
+  assert.equal(formatGap(44967, "zh"), "31 天 5 小时");
+  assert.equal(formatGap(207), "3h 27m");
+  assert.equal(formatGap(45), "45 minutes");
+  assert.equal(formatGap(45, "zh"), "45 分钟");
+  assert.equal(formatGap(1440), "1d", "a whole number of days does not trail a bare 0h");
+});
+
+test("the model is never handed a gap it would have to do arithmetic on", () => {
+  const far = factsForPrompt(factsAt("2026-09-01T06:00:00+08:00"));
+  assert.match(far, /time_to_next: \d+d/, "a month out must read in days");
+  assert.ok(!/\d{4,} minutes/.test(far), "four-digit minute counts are the bug");
 });
