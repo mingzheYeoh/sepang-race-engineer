@@ -1,4 +1,4 @@
-import { CIRCUIT, type WeekendState } from "./weekend.ts";
+import { CIRCUIT, SESSIONS, localTime, type WeekendState } from "./weekend.ts";
 import { estimateTrackTemp, type HourPoint } from "./weather.ts";
 import { bestPlans, type Compound } from "./strategy.ts";
 import type { L } from "./i18n.ts";
@@ -18,6 +18,15 @@ export type RaceFacts = {
   sessionNote: L | null;
   nextSessionName: L | null;
   minutesToNext: number | null;
+  /**
+   * The published timetable, in circuit-local time.
+   *
+   * Without it the engineer could say how long until a session but not when it
+   * starts — and the rules forbid deriving one from the other, correctly: the
+   * moment a model is allowed to do arithmetic on the facts, it is allowed to
+   * do it wrong. The fix is to state the fact, not to relax the rule.
+   */
+  schedule: { name: L; day: L; localStart: string; minutes: number }[];
   weather: {
     airC: number;
     feelsC: number;
@@ -43,6 +52,12 @@ export function buildFacts(state: WeekendState, now: HourPoint | null): RaceFact
     nextSessionName: state.next?.name ?? null,
     minutesToNext:
       state.msToNext === null ? null : Math.round(state.msToNext / 60_000),
+    schedule: SESSIONS.map((s) => ({
+      name: s.name,
+      day: s.day,
+      localStart: localTime(s.start),
+      minutes: s.minutes,
+    })),
     weather: now
       ? {
           airC: Math.round(now.tempC),

@@ -96,9 +96,14 @@ export function radioTemplate(
       }
       const gap = formatGap(facts.minutesToNext, locale);
       const name = pick(facts.nextSessionName, locale);
-      return zh
-        ? `${name}还有 ${gap} 开始。自己也进站休息一下，找个阴凉地方。`
-        : `${name} in ${gap}. Box yourself, get some shade.`;
+      // The clock time matters more than the countdown once a session is days
+      // out, so both are given.
+      const slot = facts.schedule.find((s) => s.name.en === facts.nextSessionName?.en);
+      const when = slot ? `${pick(slot.day, locale)} ${slot.localStart}` : null;
+      if (zh) {
+        return `${name}还有 ${gap} 开始${when ? `，当地时间${when}` : ""}。自己也进站休息一下，找个阴凉地方。`;
+      }
+      return `${name} in ${gap}${when ? `, ${when} local` : ""}. Box yourself, get some shade.`;
     }
 
     case "kit": {
@@ -163,6 +168,10 @@ export function factsForPrompt(facts: RaceFacts): string {
     `session_running: ${facts.sessionName ? facts.sessionName.en : "none"}`,
     `next_session: ${facts.nextSessionName ? facts.nextSessionName.en : "none"}`,
     `time_to_next: ${facts.minutesToNext === null ? "unknown" : formatGap(facts.minutesToNext, "en")}`,
+    "schedule (all times Malaysian local, UTC+8):",
+    ...facts.schedule.map(
+      (s) => `  ${s.name.en}: ${s.day.en} ${s.localStart}, ${s.minutes} minutes`,
+    ),
     `circuit: ${facts.circuit.name.en}, ${facts.circuit.lengthKm} km, ${facts.circuit.corners} corners, ${facts.circuit.laps} race laps`,
   ];
   if (facts.weather) {

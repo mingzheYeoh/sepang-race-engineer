@@ -1,4 +1,5 @@
-// Sepang Grand Prix weekend, 2-4 October 2026 (organiser-designated reference weekend).
+// The 2026 Bahrain Grand Prix, held at Sepang on 2-4 October 2026 — confirmed by
+// Formula 1 and the FIA, not a premise of this project.
 // Malaysia is UTC+8 year-round with no daylight saving, so fixed +08:00 offsets are
 // exact and we need no date library.
 

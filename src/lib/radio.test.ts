@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { buildFacts } from "./facts.ts";
 import { TOPICS, factsForPrompt, formatGap, isTopic, radioTemplate } from "./radio.ts";
-import { resolveWeekend } from "./weekend.ts";
+import { SESSIONS, resolveWeekend } from "./weekend.ts";
 import type { HourPoint } from "./weather.ts";
 
 const at = (iso: string) => Date.parse(iso);
@@ -96,4 +96,27 @@ test("the model is never handed a gap it would have to do arithmetic on", () => 
   const far = factsForPrompt(factsAt("2026-09-01T06:00:00+08:00"));
   assert.match(far, /time_to_next: \d+d/, "a month out must read in days");
   assert.ok(!/\d{4,} minutes/.test(far), "four-digit minute counts are the bug");
+});
+
+test("the prompt carries the timetable, with the timezone it is in", () => {
+  const block = factsForPrompt(factsAt("2026-09-01T06:00:00+08:00"));
+  // An unlabelled clock time invites "your local time", which is wrong for
+  // anyone reading this from outside Malaysia.
+  assert.match(block, /Malaysian local, UTC\+8/);
+  for (const s of SESSIONS) {
+    assert.ok(block.includes(s.name.en), `${s.name.en} is missing from the prompt`);
+  }
+  assert.match(block, /Practice 1: Friday \d{2}:\d{2}, 60 minutes/);
+  assert.match(block, /Grand Prix: Sunday \d{2}:\d{2}, 120 minutes/);
+});
+
+test("the next preset says both when and how long", () => {
+  const far = radioTemplate(factsAt("2026-09-01T06:00:00+08:00"), "next");
+  assert.match(far, /Practice 1/);
+  assert.match(far, /\d+d/, "a month out reads in days");
+  assert.match(far, /\d{2}:\d{2} local/, "the clock time is what you set an alarm by");
+
+  const zh = radioTemplate(factsAt("2026-09-01T06:00:00+08:00"), "next", "zh");
+  assert.match(zh, /当地时间/);
+  assert.ok(!zh.includes("local"), "the Chinese line must not leak an English word");
 });
