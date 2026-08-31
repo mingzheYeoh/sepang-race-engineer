@@ -26,6 +26,11 @@ export const COPY = {
       zh: "1999 至 2017 年雪邦举办的每一场马来西亚大奖赛，以及一份由真实成绩自动生成的测验。",
     },
     predictTitle: { en: "Grid Call | Sepang Race Engineer", zh: "赛前预测 | 雪邦赛车工程师" },
+    visitTitle: { en: "Plan Your Visit | Sepang Race Engineer", zh: "到场攻略 | 雪邦赛车工程师" },
+    visitDescription: {
+      en: "Which grandstand to sit in at Sepang, what you see from each, and how to get there — with the choice weighed against the live weather.",
+      zh: "雪邦该坐哪个看台、每个看台能看到什么、怎么到达——并结合实时天气给出建议。",
+    },
     predictDescription: {
       en: "Five calls on how the Sepang race goes, each priced against what nineteen races here actually did.",
       zh: "关于雪邦这场比赛的五个判断，每一条都对照这里十九场比赛的真实概率。",
@@ -37,8 +42,8 @@ export const COPY = {
   },
 
   disclaimer: {
-    en: "Unofficial fan project. Not affiliated with Formula 1, the FIA, or Sepang International Circuit. A 2026 Sepang round is this project's premise, not an announcement.",
-    zh: "非官方车迷项目，与 Formula 1、FIA 及雪邦国际赛道均无关联。2026 年雪邦分站是本项目的假设情景，并非官方消息。",
+    en: "Unofficial fan project. Not affiliated with Formula 1, the FIA, Bahrain International Circuit or Sepang International Circuit. Formula 1 and the FIA have confirmed that Malaysia hosts the 2026 Bahrain Grand Prix at Sepang on 2–4 October; always check the official sites for schedules, tickets and access.",
+    zh: "非官方车迷项目，与 Formula 1、FIA、巴林国际赛道及雪邦国际赛道均无关联。Formula 1 与 FIA 已确认 2026 年巴林大奖赛于 10 月 2–4 日在雪邦举办；赛程、门票与入场信息请以官方网站为准。",
   },
 
   nav: {
@@ -99,6 +104,8 @@ export const COPY = {
     goPredictSub: { en: "Five predictions, priced against 19 races", zh: "五个预测，对照 19 场真实比赛" },
     goArchive: { en: "The archive", zh: "历史档案" },
     goArchiveSub: { en: "1999–2017, and a quiz from the results", zh: "1999–2017，以及由成绩生成的测验" },
+    goVisit: { en: "Plan your visit", zh: "到场攻略" },
+    goVisitSub: { en: "Where to sit, and how to get there", zh: "坐哪里，怎么到" },
   },
 
   track: {
@@ -267,6 +274,60 @@ export const COPY = {
       pole: { en: "Does the winner come from pole?", zh: "冠军会来自杆位吗？" },
       distance: { en: "Does the race go the full 56 laps?", zh: "比赛会跑满 56 圈吗？" },
       topThree: { en: "Does the winner start in the top three?", zh: "冠军会从前三位发车吗？" },
+    },
+  },
+
+  visit: {
+    eyebrow: { en: "Plan Your Visit", zh: "到场攻略" },
+    titleTop: { en: "WHERE", zh: "该坐" },
+    titleBottom: { en: "TO SIT", zh: "哪里" },
+    intro: {
+      en: "Seven ticketed areas, and only one of the open ones has a roof. At a circuit where the heat and the afternoon storms decide the day, that is the whole decision.",
+      zh: "七个售票区域，而露天区里只有一个有顶棚。在一条被高温和午后雷暴主宰的赛道上，这基本就是全部的决定。",
+    },
+    callTitle: { en: "Today's call", zh: "今天的建议" },
+    mapTitle: { en: "Where they are", zh: "位置示意" },
+    mapNote: {
+      en: "Stand positions are placed from the turns the organisers say each one overlooks; the exact footprints are not published.",
+      zh: "看台位置依据主办方公布的「面向哪几个弯」推算标注；官方并未公布准确范围。",
+    },
+    standsTitle: { en: "Every stand", zh: "全部看台" },
+    seated: { en: "Seated · roofed", zh: "有座位 · 有顶" },
+    grassCovered: { en: "Grass · partly covered", zh: "草地 · 部分有顶" },
+    grassOpen: { en: "Grass · open air", zh: "草地 · 露天" },
+    localsOnly: { en: "MyKad holders only", zh: "仅限 MyKad 持有者" },
+    watches: { en: "Turns %T%", zh: "第 %T% 弯" },
+    ticketsNote: {
+      en: "Prices and availability change, so they are not copied here. Buy from the official ticketing pages.",
+      zh: "票价与余票会变动，这里不做转载。请从官方购票页购买。",
+    },
+    officialTickets: { en: "Official ticketing", zh: "官方购票" },
+    gettingHere: { en: "Getting here", zh: "如何到达" },
+    address: { en: "Address", zh: "地址" },
+    addressValue: {
+      en: "Jalan Pekeliling, 64000 KLIA, Selangor Darul Ehsan, Malaysia",
+      // The street line stays in Malay so it can be shown to a Grab driver as is;
+      // only the state and country are localised.
+      zh: "Jalan Pekeliling, 64000 KLIA，雪兰莪州，马来西亚",
+    },
+    fromAirport: { en: "From KL International Airport", zh: "距吉隆坡国际机场" },
+    fromAirportValue: { en: "Adjacent to the airport", zh: "紧邻机场" },
+    fromCity: { en: "From Kuala Lumpur city centre", zh: "距吉隆坡市中心" },
+    fromCityValue: { en: "85 km, about 30 minutes", zh: "85 公里，约 30 分钟" },
+    openMaps: { en: "Open in Maps", zh: "在地图中打开" },
+    tourTitle: { en: "Circuit tour", zh: "赛道导览" },
+    tourBody: {
+      en: "The circuit runs guided tours of about 1 to 1.5 hours, through the paddock, race control, the timekeeping room, the media centre and the podium. Under-6s go free; Malaysian residents have a MyKad rate.",
+      zh: "赛道提供约 1 至 1.5 小时的导览，路线包含围场、赛事控制室、计时室、媒体中心与领奖台。6 岁以下免费；马来西亚居民有 MyKad 优惠价。",
+    },
+    parkingTitle: { en: "Parking and transport", zh: "停车与交通" },
+    parkingBody: {
+      en: "Not published yet. Neither the circuit nor the event organisers have released parking, shuttle or gate information for this race, and it is usually announced in the weeks before the weekend. Nothing is guessed at here — check the official sites closer to the date.",
+      zh: "官方尚未公布。赛道方与赛事主办方都还没有发布本场比赛的停车、接驳与入场闸口信息，这类信息通常在赛前数周才公开。这里不做任何猜测——临近日期请查看官方网站。",
+    },
+    sourceNote: {
+      en: "Stand names, what each overlooks, and the visitor details above come from the event and circuit organisers' own published pages.",
+      zh: "看台名称、各自面向的弯道，以及上述到场信息，均来自赛事方与赛道方公开发布的页面。",
     },
   },
 

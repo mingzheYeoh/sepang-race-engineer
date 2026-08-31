@@ -215,6 +215,7 @@ export default function Paddock({
         <p className="eyebrow">{t(C.moreTitle)}</p>
         <div className="rule mt-2" />
         <div className="mt-3 grid gap-2">
+          <HubCard href="/visit" glyph="⌖" title={t(C.goVisit)} sub={t(C.goVisitSub)} />
           <HubCard href="/predict" glyph="◈" title={t(C.goPredict)} sub={t(C.goPredictSub)} />
           <HubCard href="/archive" glyph="▤" title={t(C.goArchive)} sub={t(C.goArchiveSub)} />
         </div>
