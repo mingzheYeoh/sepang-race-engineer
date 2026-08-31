@@ -78,6 +78,40 @@ export const COPY = {
     archiveSub: { en: "Every Malaysian Grand Prix at Sepang, 1999–2017", zh: "1999–2017 雪邦每一场马来西亚大奖赛" },
   },
 
+  /**
+   * The first-run tour. Step two deliberately holds no descriptions of its own —
+   * it renders the same six lines the landing page does, so the tour cannot
+   * teach a version of the app that no longer exists.
+   */
+  tour: {
+    skip: { en: "Skip", zh: "跳过" },
+    next: { en: "Next", zh: "下一步" },
+    back: { en: "Back", zh: "上一步" },
+    start: { en: "Start", zh: "开始" },
+    reopen: { en: "Replay the tour", zh: "重看引导" },
+    step: { en: "Step %N% of %T%", zh: "第 %N% 步 / 共 %T% 步" },
+
+    s1Title: { en: "Welcome aboard", zh: "欢迎上车" },
+    s1Body: {
+      en: "Formula 1 comes to Sepang on 2–4 October 2026. This is an unofficial fan project — six tools for that weekend, built on public data. Nothing here is live timing, and nothing here is affiliated with F1 or the circuit.",
+      zh: "F1 将于 2026 年 10 月 2–4 日来到雪邦。这是一个非官方车迷项目——为那个周末准备的六件工具，全部基于公开数据。这里没有实时计时，也与 F1 及赛道方没有任何关联。",
+    },
+
+    s2Title: { en: "What each page does", zh: "每个页面是干嘛的" },
+
+    s3Title: { en: "Finding your way", zh: "怎么找路" },
+    s3Body: {
+      en: "The bar at the bottom of the screen holds Home, Circuit, Pit Wall and the Team Radio. Everything else is one tap from Home, and the arrow at the top left always brings you back there. Language and dark/light sit at the top right.",
+      zh: "屏幕底部那一栏是主页、赛道、维修站墙和车队无线电。其余功能都在主页上一点即到，左上角的箭头永远把你带回主页。语言和深/浅色在右上角。",
+    },
+
+    s4Title: { en: "One thing worth knowing", zh: "有一件事值得先知道" },
+    s4Body: {
+      en: "The tyre strategy is a model, not a feed. It is given lap times and degradation rates and works out the stops itself — every constant behind it is printed on the Pit Wall page, so you can disagree with it. The weather is a real forecast; the track temperature on top of it is an estimate, and says so.",
+      zh: "轮胎策略是一个模型，不是实时数据。它拿到圈速和衰减率之后自己算出进站方案——背后每一个常数都印在维修站墙那一页上，所以你可以不同意它。天气是真实预报；叠在上面的赛道温度是推算值，页面上也这么写。",
+    },
+  },
+
   paddock: {
     eyebrow: { en: "Race Engineer", zh: "赛车工程师" },
     dates: { en: "2–4 October 2026", zh: "2026 年 10 月 2–4 日" },

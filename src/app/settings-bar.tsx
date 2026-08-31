@@ -26,7 +26,12 @@ export default function SettingsBar({ locale, theme }: { locale: Locale; theme: 
     if (next === locale) return;
     setCookie(LOCALE_COOKIE, next);
     // The lang attribute drives CJK typography rules, so move it now rather than
-    // waiting for the server round-trip.
+    // waiting for the server round-trip. The compiler flags any write to
+    // something declared outside the component and suggests an effect, but an
+    // effect is exactly wrong here: this must land in the same tap that caused
+    // it, not a paint later. The theme toggle below writes to the same element
+    // through dataset, which the rule does not object to.
+    // eslint-disable-next-line react-hooks/immutability
     document.documentElement.lang = htmlLang[next];
     startTransition(() => router.refresh());
   }

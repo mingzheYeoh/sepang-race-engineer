@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
+import { useSearchParams } from "next/navigation";
 import { BASE_RATES, pct } from "@/lib/history";
 import { OCTOBER_NORMALS } from "@/lib/climate";
 import { bestPlans } from "@/lib/strategy";
@@ -18,6 +19,28 @@ const IDS: Id[] = ["rain", "stops", "pole", "distance", "topThree"];
 type Picks = Partial<Record<Id, string>>;
 
 const encode = (p: Picks) => IDS.map((id) => p[id] ?? "-").join("");
+
+/**
+ * The saved card is external state, so it is read through the API for external
+ * state rather than in an effect — an effect renders the empty card first and
+ * then swaps it, which shows a stranger their own blank form for a frame.
+ */
+function subscribeStore(onChange: () => void) {
+  // Another tab editing the same card should not leave this one stale.
+  window.addEventListener("storage", onChange);
+  return () => window.removeEventListener("storage", onChange);
+}
+const readStore = () => {
+  try {
+    return localStorage.getItem(STORE);
+  } catch {
+    // Private windows and blocked site data both throw here; the page works
+    // perfectly well without remembering anything.
+    return null;
+  }
+};
+const noStore = () => null;
+
 const decode = (s: string): Picks => {
   const out: Picks = {};
   IDS.forEach((id, i) => {
@@ -35,36 +58,24 @@ export default function GridCall({ live }: { live: HourPoint | null }) {
   const modelStops = useMemo(() => bestPlans(trackC, 3, 1)[0].stops, [trackC]);
   const rainChance = live?.rainChance ?? Math.round(OCTOBER_NORMALS.afternoonStormChance * 100);
 
-  const [picks, setPicks] = useState<Picks>({});
+  const shared = useSearchParams().get("p");
+  const stored = useSyncExternalStore(subscribeStore, readStore, noStore);
+  // Nothing has been touched on this visit yet, so the card is whatever was
+  // handed to it. A shared link wins over what this device remembered, so
+  // opening someone else's card shows their card and not your own.
+  const [edited, setEdited] = useState<Picks | null>(null);
+  const picks = edited ?? decode(shared ?? stored ?? "");
   const [copied, setCopied] = useState(false);
 
-  // A shared link wins over whatever this device remembered, so opening
-  // someone else's card shows their card and not your own.
-  useEffect(() => {
-    const shared = new URLSearchParams(window.location.search).get("p");
-    if (shared) {
-      setPicks(decode(shared));
-      return;
-    }
-    try {
-      const saved = localStorage.getItem(STORE);
-      if (saved) setPicks(decode(saved));
-    } catch {
-      // Private windows and blocked site data both throw here; the page works
-      // perfectly well without remembering anything.
-    }
-  }, []);
-
   function choose(id: Id, value: string) {
-    setPicks((prev) => {
-      const next = prev[id] === value ? { ...prev, [id]: undefined } : { ...prev, [id]: value };
-      try {
-        localStorage.setItem(STORE, encode(next));
-      } catch {
-        /* not being able to save is not a reason to not answer */
-      }
-      return next;
-    });
+    const next =
+      picks[id] === value ? { ...picks, [id]: undefined } : { ...picks, [id]: value };
+    setEdited(next);
+    try {
+      localStorage.setItem(STORE, encode(next));
+    } catch {
+      /* not being able to save is not a reason to not answer */
+    }
     setCopied(false);
   }
 
@@ -231,7 +242,7 @@ export default function GridCall({ live }: { live: HourPoint | null }) {
           </button>
           <button
             onClick={() => {
-              setPicks({});
+              setEdited({});
               setCopied(false);
               try {
                 localStorage.removeItem(STORE);

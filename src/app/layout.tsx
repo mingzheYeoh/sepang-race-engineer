@@ -4,6 +4,7 @@ import type { Metadata, Viewport } from "next";
 import { Chakra_Petch, IBM_Plex_Sans } from "next/font/google";
 import BackLink from "./back-link";
 import BottomBar from "./bottom-bar";
+import Tour from "./tour";
 import SettingsBar from "./settings-bar";
 import { COPY } from "@/lib/copy";
 import type { Locale } from "@/lib/i18n";
@@ -125,6 +126,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           {/* useSearchParams needs a boundary; the bar must not block first paint. */}
           <Suspense fallback={null}>
             <BottomBar />
+          </Suspense>
+
+          <Suspense fallback={null}>
+            <Tour />
           </Suspense>
         </LocaleProvider>
       </body>

@@ -1,8 +1,10 @@
 import Link from "next/link";
+import ReplayTour from "./replay-tour";
 import { DRS_ZONES, LAP, VIEWBOX, lapPath, zonePath } from "@/lib/circuit";
 import { CIRCUIT } from "@/lib/weekend";
 import { COPY } from "@/lib/copy";
 import { pick, type L } from "@/lib/i18n";
+import { SECTIONS } from "@/lib/sections";
 import { getLocale } from "@/lib/locale-server";
 
 /**
@@ -20,15 +22,6 @@ export default async function Home() {
   const locale = await getLocale();
   const t = (s: L) => pick(s, locale);
   const C = COPY.home;
-
-  const sections: { href: string; glyph: string; title: L; sub: L }[] = [
-    { href: "/paddock", glyph: "▣", title: COPY.nav.paddock, sub: C.paddockSub },
-    { href: "/track", glyph: "◎", title: COPY.nav.circuit, sub: C.circuitSub },
-    { href: "/pitwall", glyph: "◈", title: COPY.nav.pitwall, sub: C.pitwallSub },
-    { href: "/visit", glyph: "⌖", title: COPY.paddock.goVisit, sub: C.visitSub },
-    { href: "/predict", glyph: "◇", title: COPY.paddock.goPredict, sub: C.predictSub },
-    { href: "/archive", glyph: "▤", title: COPY.paddock.goArchive, sub: C.archiveSub },
-  ];
 
   return (
     <main className="flex flex-col gap-8">
@@ -85,7 +78,7 @@ export default async function Home() {
         <p className="eyebrow">{t(C.sectionsTitle)}</p>
         <div className="rule mt-2" />
         <ul className="mt-3 flex flex-col gap-2">
-          {sections.map((s) => (
+          {SECTIONS.map((s) => (
             <li key={s.href}>
               <Link
                 href={s.href}
@@ -105,6 +98,9 @@ export default async function Home() {
             </li>
           ))}
         </ul>
+        <div className="mt-2">
+          <ReplayTour />
+        </div>
       </section>
     </main>
   );
