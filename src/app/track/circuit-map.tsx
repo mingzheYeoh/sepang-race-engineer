@@ -69,10 +69,10 @@ export default function CircuitMap() {
           <path d={D} fill="none" stroke="var(--color-track)" strokeWidth={TRACK_W} strokeLinejoin="round" strokeLinecap="round" />
 
           {ZONES.map((d, i) => (
-            <path key={i} d={d} fill="none" stroke="var(--color-amber)" strokeWidth={5} strokeDasharray="16 11" opacity={0.9} />
+            <path key={i} d={d} fill="none" stroke="var(--color-drs)" strokeWidth={5} strokeDasharray="16 11" opacity={0.95} />
           ))}
 
-          <circle cx={LAP[0][0]} cy={LAP[0][1]} r={14} fill="none" stroke="var(--color-text)" strokeWidth={4} />
+          <circle cx={LAP[0][0]} cy={LAP[0][1]} r={14} fill="none" stroke="var(--color-track-mark)" strokeWidth={4} />
           <text x={LAP[0][0] - 4} y={LAP[0][1] + 46} textAnchor="middle" fill="var(--color-muted)" fontSize={28}>
             S/F
           </text>

@@ -14,6 +14,7 @@ import {
   readTheme,
 } from "@/lib/i18n";
 import { LocaleProvider } from "@/lib/locale-context";
+import { getLocale } from "@/lib/locale-server";
 import "./globals.css";
 
 // Self-hosted by next/font, so there is no third-party request and no layout
@@ -32,11 +33,14 @@ const plex = IBM_Plex_Sans({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Sepang Race Engineer",
-  description:
-    "An unofficial companion for a Sepang Grand Prix weekend: schedule, tropical weather, circuit guide and pit-wall strategy.",
-};
+/** The tab title is part of the translation, so it reads the same cookie. */
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return {
+    title: pick(COPY.meta.appTitle, locale),
+    description: pick(COPY.meta.appDescription, locale),
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",

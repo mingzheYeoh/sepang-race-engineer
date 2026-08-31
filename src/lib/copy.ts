@@ -8,6 +8,24 @@ import type { L } from "./i18n";
  * never drift apart. This file is only the chrome.
  */
 export const COPY = {
+  meta: {
+    appTitle: { en: "Sepang Race Engineer", zh: "雪邦赛车工程师" },
+    appDescription: {
+      en: "An unofficial companion for a Sepang Grand Prix weekend: schedule, tropical weather, circuit guide and pit-wall strategy.",
+      zh: "雪邦大奖赛周末的非官方随身助手：赛程、热带天气、赛道指南与维修站墙策略。",
+    },
+    trackTitle: { en: "Circuit Guide | Sepang Race Engineer", zh: "赛道指南 | 雪邦赛车工程师" },
+    trackDescription: {
+      en: "All fifteen corners of Sepang International Circuit, drawn to scale from surveyed coordinates, each explaining one idea from Formula 1.",
+      zh: "雪邦国际赛道的十五个弯，按实测坐标等比绘制，每个弯讲透一个 F1 概念。",
+    },
+    pitwallTitle: { en: "Pit Wall | Sepang Race Engineer", zh: "维修站墙 | 雪邦赛车工程师" },
+    pitwallDescription: {
+      en: "Track temperature, tyre degradation and the pit-stop call for a Sepang Grand Prix — a transparent model you can argue with.",
+      zh: "雪邦大奖赛的赛道温度、轮胎衰减与进站决策——一个所有常数都摊开、可以被质询的模型。",
+    },
+  },
+
   disclaimer: {
     en: "Unofficial fan project. Not affiliated with Formula 1, the FIA, or Sepang International Circuit. A 2026 Sepang round is this project's premise, not an announcement.",
     zh: "非官方车迷项目，与 Formula 1、FIA 及雪邦国际赛道均无关联。2026 年雪邦分站是本项目的假设情景，并非官方消息。",

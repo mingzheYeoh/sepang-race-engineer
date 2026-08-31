@@ -19,9 +19,15 @@
   --color-wet: #38c8e6;
   --color-royal: #2a6ce0;
 
-  /* The map draws itself from these so the track stays legible on either ground. */
+  /* The map draws itself from these so the track stays legible on either ground.
+     The track is dark in BOTH themes, so anything drawn on top of it — the DRS
+     zones, the start/finish ring — keeps its own bright value rather than
+     following the page. Tying them to --color-amber and --color-text put dark
+     gold and near-black onto dark asphalt in the light theme. */
   --color-track: #2b3442;
   --color-track-edge: #1b212c;
+  --color-drs: #ffc61e;
+  --color-track-mark: #eef2f8;
 
   --glow-sky: rgba(42, 108, 224, 0.2);
   --glow-ground: rgba(255, 198, 30, 0.07);
@@ -47,6 +53,8 @@
     --color-royal: #1e4fa8;
     --color-track: #3a4250;
     --color-track-edge: #c9c4b6;
+    --color-drs: #ffc61e;
+    --color-track-mark: #ffffff;
     --glow-sky: rgba(30, 79, 168, 0.07);
     --glow-ground: rgba(154, 107, 0, 0.06);
     --scanline: rgba(0, 0, 0, 0.02);
@@ -66,6 +74,8 @@
   --color-royal: #1e4fa8;
   --color-track: #3a4250;
   --color-track-edge: #c9c4b6;
+  --color-drs: #ffc61e;
+  --color-track-mark: #ffffff;
   --glow-sky: rgba(30, 79, 168, 0.07);
   --glow-ground: rgba(154, 107, 0, 0.06);
   --scanline: rgba(0, 0, 0, 0.02);

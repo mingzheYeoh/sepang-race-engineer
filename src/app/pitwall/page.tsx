@@ -5,11 +5,13 @@ import { COPY } from "@/lib/copy";
 import { pick } from "@/lib/i18n";
 import { getLocale } from "@/lib/locale-server";
 
-export const metadata = {
-  title: "Pit Wall | Sepang Race Engineer",
-  description:
-    "Track temperature, tyre degradation and the pit-stop call for a Sepang Grand Prix — a transparent model you can argue with.",
-};
+export async function generateMetadata() {
+  const locale = await getLocale();
+  return {
+    title: pick(COPY.meta.pitwallTitle, locale),
+    description: pick(COPY.meta.pitwallDescription, locale),
+  };
+}
 
 export default async function PitWallPage() {
   const [weather, locale] = await Promise.all([getSepangWeather(), getLocale()]);

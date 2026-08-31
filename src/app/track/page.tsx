@@ -4,11 +4,13 @@ import { COPY } from "@/lib/copy";
 import { pick } from "@/lib/i18n";
 import { getLocale } from "@/lib/locale-server";
 
-export const metadata = {
-  title: "Circuit Guide | Sepang Race Engineer",
-  description:
-    "All fifteen corners of Sepang International Circuit, drawn to scale, each explaining one idea from Formula 1.",
-};
+export async function generateMetadata() {
+  const locale = await getLocale();
+  return {
+    title: pick(COPY.meta.trackTitle, locale),
+    description: pick(COPY.meta.trackDescription, locale),
+  };
+}
 
 export default async function TrackPage() {
   const locale = await getLocale();
