@@ -1,12 +1,16 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import type { RadioReply } from "./api/radio/route";
 import { MAX_QUESTION, TOPICS, TOPIC_LABELS, type Topic } from "@/lib/radio";
 
 type Line = { from: "you" | "engineer"; text: string; source?: RadioReply["source"] };
 
-export default function TeamRadio({ tOverride }: { tOverride?: string }) {
+export default function TeamRadio() {
+  // Read from the URL rather than a prop so the radio can live in the layout
+  // and stay in sync with the page's time override on every route.
+  const tOverride = useSearchParams().get("t") ?? undefined;
   const [open, setOpen] = useState(false);
   const [lines, setLines] = useState<Line[]>([]);
   const [input, setInput] = useState("");

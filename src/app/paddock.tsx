@@ -12,7 +12,6 @@ import {
 import { estimateTrackTemp, type HourPoint, type SepangWeather } from "@/lib/weather";
 import { OCTOBER_NORMALS } from "@/lib/climate";
 import { adviceFor } from "@/lib/advice";
-import TeamRadio from "./team-radio";
 
 /** Open-Meteo returns local naive timestamps; Malaysia is a fixed +08:00. */
 const msOf = (h: HourPoint) => Date.parse(`${h.time}:00+08:00`);
@@ -220,7 +219,6 @@ export default function Paddock({
       </section>
 
       <TimeTravel frozen={frozen} />
-      <TeamRadio tOverride={tOverride} />
     </main>
   );
 }

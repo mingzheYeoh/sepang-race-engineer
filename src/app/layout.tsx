@@ -1,4 +1,7 @@
+import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
+import Nav from "./nav";
+import TeamRadio from "./team-radio";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -18,7 +21,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className="min-h-dvh antialiased">
-        <div className="relative z-10 mx-auto flex min-h-dvh max-w-lg flex-col px-5 pb-10 pt-6">
+        <div className="relative z-10 mx-auto flex min-h-dvh max-w-lg flex-col px-5 pb-24 pt-6">
+          <Nav />
           {children}
           <footer className="mt-auto pt-10 text-[11px] leading-relaxed text-muted">
             Unofficial fan project. Not affiliated with Formula 1, the FIA, or Sepang
@@ -26,6 +30,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             announcement. Weather by Open-Meteo.
           </footer>
         </div>
+        {/* useSearchParams needs a boundary; the radio is not worth blocking render for. */}
+        <Suspense fallback={null}>
+          <TeamRadio />
+        </Suspense>
       </body>
     </html>
   );
