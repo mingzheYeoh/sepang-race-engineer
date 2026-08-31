@@ -58,6 +58,7 @@ export const COPY = {
     pitwall: { en: "Pit Wall", zh: "维修站墙" },
     radio: { en: "Radio", zh: "无线电" },
     back: { en: "Home", zh: "主页" },
+    loading: { en: "Loading", zh: "加载中" },
   },
 
   /** The landing page: what this is, and the way in to each part of it. */
