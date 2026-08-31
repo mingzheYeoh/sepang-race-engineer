@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { cookies } from "next/headers";
 import type { Metadata, Viewport } from "next";
 import { Chakra_Petch, IBM_Plex_Sans } from "next/font/google";
+import BackLink from "./back-link";
 import BottomBar from "./bottom-bar";
 import SettingsBar from "./settings-bar";
 import { COPY } from "@/lib/copy";
@@ -86,7 +87,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             className="relative z-10 mx-auto flex min-h-dvh max-w-lg flex-col px-5 pt-5"
             style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 92px)" }}
           >
-            <SettingsBar locale={locale} theme={theme ?? "dark"} />
+            {/* Back on the left, settings on the right, one row, every page. */}
+            <div className="mb-4 flex items-center justify-between gap-2">
+              <Suspense fallback={<span />}>
+                <BackLink />
+              </Suspense>
+              <SettingsBar locale={locale} theme={theme ?? "dark"} />
+            </div>
             {children}
             <footer className="mt-auto pt-10 text-[11px] leading-relaxed text-muted">
               {pick(COPY.disclaimer, locale)}

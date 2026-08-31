@@ -14,6 +14,11 @@ export const COPY = {
       en: "An unofficial companion for a Sepang Grand Prix weekend: schedule, tropical weather, circuit guide and pit-wall strategy.",
       zh: "雪邦大奖赛周末的非官方随身助手：赛程、热带天气、赛道指南与维修站墙策略。",
     },
+    paddockTitle: { en: "Paddock | Sepang Race Engineer", zh: "围场 | 雪邦赛车工程师" },
+    paddockDescription: {
+      en: "The live session or the countdown to the next one, the hour-by-hour Sepang forecast, and what both of them mean for the weekend.",
+      zh: "正在进行的场次或下一场的倒计时、雪邦逐小时天气，以及这两者对这个周末意味着什么。",
+    },
     trackTitle: { en: "Circuit Guide | Sepang Race Engineer", zh: "赛道指南 | 雪邦赛车工程师" },
     trackDescription: {
       en: "All fifteen corners of Sepang International Circuit, drawn to scale from surveyed coordinates, each explaining one idea from Formula 1.",
@@ -47,10 +52,30 @@ export const COPY = {
   },
 
   nav: {
+    home: { en: "Home", zh: "主页" },
     paddock: { en: "Paddock", zh: "围场" },
     circuit: { en: "Circuit", zh: "赛道" },
     pitwall: { en: "Pit Wall", zh: "维修站墙" },
     radio: { en: "Radio", zh: "无线电" },
+    back: { en: "Home", zh: "主页" },
+  },
+
+  /** The landing page: what this is, and the way in to each part of it. */
+  home: {
+    eyebrow: { en: "Unofficial fan project", zh: "非官方车迷项目" },
+    lede: {
+      en: "Formula 1 returns to Sepang. Six tools for the weekend — the live schedule, the tropical weather that decides everything, the circuit corner by corner, and a strategy model you can argue with.",
+      zh: "F1 重返雪邦。为这个周末准备的六件工具：实时赛程、决定一切的热带天气、逐弯拆解的赛道，以及一个可以被你质询的策略模型。",
+    },
+    enter: { en: "Start at the Paddock", zh: "从围场开始" },
+    cornersWord: { en: "corners", zh: "个弯" },
+    sectionsTitle: { en: "Everything here", zh: "全部功能" },
+    paddockSub: { en: "Live session, countdown and the hour-by-hour forecast", zh: "进行中的场次、倒计时与逐小时天气" },
+    circuitSub: { en: "All 15 corners, drawn 1:1 from surveyed coordinates", zh: "15 个弯，按实测坐标 1:1 绘制" },
+    pitwallSub: { en: "A tyre model that finds its own strategy", zh: "自己找出策略的轮胎模型" },
+    visitSub: { en: "Which grandstand to sit in, and how to get there", zh: "该坐哪个看台，以及怎么到达" },
+    predictSub: { en: "Five calls, priced against 19 real races", zh: "五个判断，对照 19 场真实比赛定价" },
+    archiveSub: { en: "Every Malaysian Grand Prix at Sepang, 1999–2017", zh: "1999–2017 雪邦每一场马来西亚大奖赛" },
   },
 
   paddock: {
@@ -347,6 +372,12 @@ export const COPY = {
     },
     close: { en: "Close", zh: "关闭" },
     closeRadio: { en: "Close team radio", zh: "关闭车队无线电" },
+    engineer: { en: "Engineer", zh: "工程师" },
+    you: { en: "You", zh: "你" },
+    thinking: { en: "Engineer is on the radio", zh: "工程师正在回话" },
+    presetsLabel: { en: "Quick questions", zh: "快捷提问" },
+    clear: { en: "Clear", zh: "清空" },
+    live: { en: "Answered by the model", zh: "由模型作答" },
   },
 } as const;
 

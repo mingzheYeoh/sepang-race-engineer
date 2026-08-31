@@ -42,9 +42,7 @@ export default function SettingsBar({ locale, theme }: { locale: Locale; theme: 
 
   return (
     <div
-      className={`mb-4 flex items-center justify-end gap-2 transition-opacity ${
-        pending ? "opacity-60" : ""
-      }`}
+      className={`flex items-center gap-2 transition-opacity ${pending ? "opacity-60" : ""}`}
     >
       <div
         className="flex overflow-hidden rounded-full border border-line"

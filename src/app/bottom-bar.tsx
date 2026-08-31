@@ -9,7 +9,7 @@ import { useT } from "@/lib/locale-context";
 import type { L } from "@/lib/i18n";
 
 const LINKS: { href: string; label: L; glyph: string }[] = [
-  { href: "/", label: COPY.nav.paddock, glyph: "▣" },
+  { href: "/", label: COPY.nav.home, glyph: "⌂" },
   { href: "/track", label: COPY.nav.circuit, glyph: "◎" },
   { href: "/pitwall", label: COPY.nav.pitwall, glyph: "◈" },
 ];
