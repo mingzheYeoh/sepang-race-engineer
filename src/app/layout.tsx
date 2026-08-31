@@ -5,6 +5,7 @@ import { Chakra_Petch, IBM_Plex_Sans } from "next/font/google";
 import BottomBar from "./bottom-bar";
 import SettingsBar from "./settings-bar";
 import { COPY } from "@/lib/copy";
+import type { Locale } from "@/lib/i18n";
 import {
   LOCALE_COOKIE,
   THEME_COOKIE,
@@ -33,14 +34,35 @@ const plex = IBM_Plex_Sans({
   display: "swap",
 });
 
+/**
+ * Absolute base for the link preview.
+ *
+ * Vercel gives the production alias at build time; the fallback keeps `next dev`
+ * and `next build` on a laptop from warning about a missing metadataBase.
+ */
+const SITE = new URL(
+  process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "http://localhost:3000",
+);
+
 /** The tab title is part of the translation, so it reads the same cookie. */
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
+  const title = pick(COPY.meta.appTitle, locale);
+  const description = pick(COPY.meta.appDescription, locale);
   return {
-    title: pick(COPY.meta.appTitle, locale),
-    description: pick(COPY.meta.appDescription, locale),
+    metadataBase: SITE,
+    title,
+    description,
+    // The Grid Call can put this URL in a share sheet, so the card it unfurls
+    // into is part of the feature. opengraph-image.tsx draws it.
+    openGraph: { title, description, type: "website", locale: ogLocale[locale] },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
+
+const ogLocale: Record<Locale, string> = { en: "en_US", zh: "zh_CN" };
 
 export const viewport: Viewport = {
   width: "device-width",
