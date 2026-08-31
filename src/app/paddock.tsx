@@ -208,7 +208,7 @@ export default function Paddock({
           Engineer&rsquo;s notes
         </h2>
         <ul className="mt-3 flex flex-col gap-3">
-          {adviceFor(w, live).map((a) => (
+          {adviceFor(w, live, now).map((a) => (
             <li key={a.text} className="flex gap-3 text-sm leading-relaxed">
               <span aria-hidden>{a.icon}</span>
               <span>{a.text}</span>

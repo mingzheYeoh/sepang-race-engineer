@@ -139,3 +139,14 @@ export function localTime(iso: string): string {
     timeZone: CIRCUIT.timezone,
   }).format(Date.parse(iso));
 }
+
+/** Hour of day (0-23) at the circuit, for rules that depend on daylight. */
+export function localHour(ms: number): number {
+  return Number(
+    new Intl.DateTimeFormat("en-GB", {
+      hour: "2-digit",
+      hourCycle: "h23",
+      timeZone: CIRCUIT.timezone,
+    }).format(ms),
+  );
+}

@@ -1,4 +1,4 @@
-import { CIRCUIT } from "./weekend";
+import { CIRCUIT } from "./weekend.ts";
 
 export type HourPoint = {
   time: string;
